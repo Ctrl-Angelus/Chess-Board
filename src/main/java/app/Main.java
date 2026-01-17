@@ -12,14 +12,29 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     final double height = Screen.getPrimary().getVisualBounds().getHeight() * 0.90;
+    final int boardSize = 8;
+    final double cellSize = height / boardSize;
+    boolean color = false;
 
     @Override
     public void start(Stage stage) {
         Canvas canvas = new Canvas(height, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, height, height);
+        double x;
+        double y = 0;
+
+        for (int col = 0; col < boardSize; col++) {
+            x = 0;
+            for (int row = 0; row < boardSize; row++){
+                gc.setFill(color ? Color.BLACK : Color.WHITE);
+                gc.fillRect(x, y, cellSize, cellSize);
+                x += cellSize;
+                color = !color;
+            }
+            color = !color;
+            y += cellSize;
+        }
 
         VBox vBox = new VBox(canvas);
 

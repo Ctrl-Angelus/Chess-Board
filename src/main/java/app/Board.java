@@ -35,14 +35,22 @@ public class Board {
         for (int row = 0; row < this.boardSize; row++){
             for (int col = 0; col < this.boardSize; col++) {
                 Cell currentCell = cells[row][col];
-                Color currentColor = currentCell.isSelected() ? Color.BLUE : currentCell.color;
-                gc.setFill(currentColor);
+                gc.setFill(currentCell.color);
                 gc.fillRect(
                         currentCell.x,
                         currentCell.y,
                         this.cellSize,
                         this.cellSize
                 );
+                if (currentCell.isSelected()){
+                    gc.setFill(Color.rgb(174, 30, 30, 0.8));
+                    gc.fillRect(
+                            currentCell.x,
+                            currentCell.y,
+                            this.cellSize,
+                            this.cellSize
+                    );
+                }
             }
         }
     }

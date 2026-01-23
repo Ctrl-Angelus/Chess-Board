@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7359b20b-0185-4944-9f99-80a7dbde2ac0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/app/MainScene.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/app/ChessPieces.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/app/Piece.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Board.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/Cell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Cell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/MainScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/MainScene.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/appParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/appParameters.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,6 +59,7 @@
       <list>
         <option value="Record" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>

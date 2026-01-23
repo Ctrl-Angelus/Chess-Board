@@ -15,35 +15,14 @@ public class MainScene {
                 appParameters.APP_SIZE,
                 appParameters.APP_SIZE
         );
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
         Board board = new Board();
-        board.drawBoard(gc);
 
-        VBox vBox = new VBox(canvas);
-
-        AnimationTimer timer = new AnimationTimer() {
-            private long lastUpdate = 0;
-
-            @Override
-            public void handle(long now) {
-                if (now - lastUpdate >= appParameters.NANOSECONDS/appParameters.FPS) {
-                    board.drawBoard(gc);
-                    lastUpdate = now;
-                }
-            }
-        };
-
-        timer.start();
-        this.scene = new Scene(vBox);
-
-        this.scene.setOnMousePressed(mouseEvent -> {
+        canvas.setOnMouseClicked(mouseEvent -> {
             double coordinateX = mouseEvent.getSceneX();
             double coordinateY = mouseEvent.getSceneY();
 
-            int currentCol = (int) (coordinateX / board.CELL_SIZE);
-            int currentRow = (int) (coordinateY / board.CELL_SIZE);
+            int currentCol = (int) (coordinateX / appParameters.CELL_SIZE);
+            int currentRow = (int) (coordinateY / appParameters.CELL_SIZE);
 
             if (mouseEvent.getButton() == MouseButton.SECONDARY){
                 board.toggleCellHighlight(currentRow, currentCol);
@@ -55,6 +34,26 @@ public class MainScene {
                 System.out.println(board.getSelectedCell());
             }
         });
+
+        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+
+        VBox vBox = new VBox(canvas);
+        board.drawBoard(graphicsContext);
+
+        AnimationTimer timer = new AnimationTimer() {
+            private long lastUpdate = 0;
+
+            @Override
+            public void handle(long now) {
+                if (now - lastUpdate >= appParameters.NANOSECONDS/appParameters.FPS) {
+                    board.drawBoard(graphicsContext);
+                    lastUpdate = now;
+                }
+            }
+        };
+        timer.start();
+
+        this.scene = new Scene(vBox);
     }
     public Scene getScene(){
         return this.scene;

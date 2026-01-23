@@ -5,66 +5,86 @@ import javafx.scene.paint.Color;
 
 public class Board {
 
-    public final int boardSize = 8;
-    public final double cellSize = appParameters.AppSize / boardSize;
+    private final int BOARD_SIZE = 8;
+    public final double CELL_SIZE = appParameters.APP_SIZE / BOARD_SIZE;
 
-    private final Cell[][] cells = new Cell[this.boardSize][this.boardSize];
+    private final Cell[][] cellsMatrix = new Cell[this.BOARD_SIZE][this.BOARD_SIZE];
 
-    private Cell selectedCell = null;
+    private int[] selectedCell = null;
 
     public Board(){
-        double x;
-        double y = 0;
+        double coordinateX;
+        double coordinateY = 0;
         boolean isColored = false;
 
-        for (int row = 0; row < boardSize; row++) {
-            x = 0;
-            for (int col = 0; col < boardSize; col++){
-                Cell cell = new Cell(x, y, cellSize, isColored ? Color.BLACK : Color.WHITE, false);
-                cells[row][col] = cell;
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            coordinateX = 0;
+            for (int column = 0; column < BOARD_SIZE; column++){
+                Cell cell = new Cell(
+                        coordinateX,
+                        coordinateY,
+                        CELL_SIZE,
+                        isColored ? Color.BLACK : Color.WHITE,
+                        false
+                );
 
-                x += cellSize;
+                cellsMatrix[row][column] = cell;
+
+                coordinateX += CELL_SIZE;
                 isColored = !isColored;
             }
-            isColored = cells[row][0].color == Color.WHITE;
-            y += cellSize;
+            isColored = cellsMatrix[row][0].color == Color.WHITE;
+            coordinateY += CELL_SIZE;
         }
     }
 
     public void drawBoard(GraphicsContext gc){
-        for (int row = 0; row < this.boardSize; row++){
-            for (int col = 0; col < this.boardSize; col++) {
-                Cell currentCell = cells[row][col];
-                gc.setFill(currentCell.color);
-                gc.fillRect(
-                        currentCell.x,
-                        currentCell.y,
-                        this.cellSize,
-                        this.cellSize
-                );
-                if (currentCell.isSelected()){
-                    gc.setFill(Color.rgb(174, 30, 30, 0.8));
-                    gc.fillRect(
-                            currentCell.x,
-                            currentCell.y,
-                            this.cellSize,
-                            this.cellSize
-                    );
+        for (int row = 0; row < this.BOARD_SIZE; row++){
+            for (int column = 0; column < this.BOARD_SIZE; column++) {
+                Cell currentCell = cellsMatrix[row][column];
+                currentCell.paint(gc, null);
+
+                if (currentCell.isHighlighted()){
+                    currentCell.paint(gc, appParameters.HIGHLIGHT_COLOR);
+                }
+                if (getSelectedCell() != null){
+                    if (!currentCell.equals(getSelectedCell())){
+                        continue;
+                    }
+                    currentCell.paint(gc, appParameters.SELECTION_COLOR);
                 }
             }
         }
     }
 
-    public void toggleCellSelection(int col, int row){
-        if (col >= this.boardSize || col < 0 || row >= this.boardSize || row < 0){
+    public void toggleCellHighlight(int row, int column){
+        if (!isInsideBoard(row, column)){
             return;
         }
-        Cell currentCell = this.cells[row][col];
-        currentCell.toggleSelected();
-        this.selectedCell = currentCell.isSelected() ? currentCell : null;
+        Cell currentCell = this.cellsMatrix[row][column];
+        currentCell.toggleHighlight();
     }
 
     public Cell getSelectedCell(){
-        return this.selectedCell;
+        if (this.selectedCell == null){
+            return null;
+        }
+        return this.cellsMatrix[this.selectedCell[0]][this.selectedCell[1]];
+    }
+    public void setSelectedCell(int row, int column){
+        if (!isInsideBoard(row, column)){
+            return;
+        }
+        if (this.cellsMatrix[row][column].equals(getSelectedCell())){
+            this.selectedCell = null;
+            return;
+        }
+        this.selectedCell = new int[2];
+        this.selectedCell[0] = row;
+        this.selectedCell[1] = column;
+    }
+
+    private boolean isInsideBoard(int row, int column){
+        return column < this.BOARD_SIZE && column >= 0 && row < this.BOARD_SIZE && row >= 0;
     }
 }

@@ -1,12 +1,12 @@
-package app;
+package app.pieces;
 
 public enum ChessPieces {
-    PAWN(1, "", "/images/pawn.png"),
-    ROOK(5, "R", "/images/rook.png"),
-    KNIGHT(3, "K", "/images/knight.png"),
-    BISHOP(3, "B", "/images/bishop.png"),
-    QUEEN(9, "Q", "/images/queen.png"),
-    KING(0, "K", "/images/king.png");
+    PAWN(1, "", "/images/%color%/pawn.png"),
+    ROOK(5, "R", "/images/%color%/rook.png"),
+    KNIGHT(3, "N", "/images/%color%/knight.png"),
+    BISHOP(3, "B", "/images/%color%/bishop.png"),
+    QUEEN(9, "Q", "/images/%color%/queen.png"),
+    KING(0, "K", "/images/%color%/king.png");
 
     public final int numericalValue;
     public final String notation;

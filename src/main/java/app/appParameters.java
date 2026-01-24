@@ -14,9 +14,9 @@ public class appParameters {
 
     public static final String TITLE = "Chess Board JavaFX";
 
-    public static final Color HIGHLIGHT_COLOR = Color.rgb(174, 30, 30, 0.8);
-    public static final Color SELECTION_COLOR = Color.rgb(30, 172, 174);
+    public static final Color HIGHLIGHT_COLOR = Color.valueOf("AE1E1ECC");
+    public static final Color SELECTION_COLOR = Color.valueOf("1EACAEFF");
 
-    public static final Color BOARD_COLOR_DARK = Color.rgb(0, 0, 0);
-    public static final Color BOARD_COLOR_LIGHT = Color.rgb(151, 202, 217);
+    public static final Color BOARD_COLOR_DARK = Color.valueOf("000000FF");
+    public static final Color BOARD_COLOR_LIGHT = Color.valueOf("97CAD9FF");
 }

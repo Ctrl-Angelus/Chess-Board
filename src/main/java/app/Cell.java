@@ -1,5 +1,6 @@
 package app;
 
+import app.pieces.Piece;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

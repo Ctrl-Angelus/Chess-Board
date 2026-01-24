@@ -1,12 +1,9 @@
 package app.pieces;
 
-import app.ChessPieces;
-import app.Piece;
-
 public class King extends Piece {
 
-    public King(double coordinateX, double coordinateY){
-        super(ChessPieces.KING, coordinateX, coordinateY);
+    public King(double coordinateX, double coordinateY, PieceShade pieceShade){
+        super(ChessPieces.KING, coordinateX, coordinateY, pieceShade);
     }
 
     @Override

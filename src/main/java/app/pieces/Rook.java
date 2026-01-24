@@ -1,12 +1,9 @@
 package app.pieces;
 
-import app.ChessPieces;
-import app.Piece;
-
 public class Rook extends Piece {
 
-    public Rook(double coordinateX, double coordinateY){
-        super(ChessPieces.ROOK, coordinateX, coordinateY);
+    public Rook(double coordinateX, double coordinateY, PieceShade pieceShade){
+        super(ChessPieces.ROOK, coordinateX, coordinateY, pieceShade);
     }
 
     @Override

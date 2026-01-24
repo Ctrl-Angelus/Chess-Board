@@ -1,9 +1,11 @@
 package app.pieces;
 
+import app.utils.Vector2;
+
 public class Pawn extends Piece {
 
-    public Pawn(double coordinateX, double coordinateY, PieceShade pieceShade){
-        super(ChessPieces.PAWN, coordinateX, coordinateY, pieceShade);
+    public Pawn(Vector2 coordinates, PieceShade pieceShade){
+        super(ChessPieces.PAWN, coordinates, pieceShade);
     }
 
     @Override

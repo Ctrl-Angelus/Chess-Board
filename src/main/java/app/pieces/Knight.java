@@ -1,8 +1,10 @@
 package app.pieces;
 
+import app.utils.Vector2;
+
 public class Knight extends Piece {
-    public Knight(double coordinateX, double coordinateY, PieceShade pieceShade){
-        super(ChessPieces.KNIGHT, coordinateX, coordinateY, pieceShade);
+    public Knight(Vector2 coordinates, PieceShade pieceShade){
+        super(ChessPieces.KNIGHT, coordinates, pieceShade);
     }
 
     @Override

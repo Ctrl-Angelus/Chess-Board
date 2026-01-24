@@ -1,5 +1,7 @@
-package app;
+package app.scenes;
 
+import app.Board;
+import app.utils.appParameters;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;

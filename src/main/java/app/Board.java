@@ -1,5 +1,9 @@
 package app;
 
+import app.pieces.ChessPieces;
+import app.pieces.PieceShade;
+import app.utils.Vector2;
+import app.utils.appParameters;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Board {
@@ -9,6 +13,11 @@ public class Board {
     private int[] selectedCell = null;
 
     public Board(){
+        this.createBoard();
+        this.placePieces();
+    }
+
+    private void createBoard(){
         double coordinateX;
         double coordinateY = 0;
         boolean isColored = false;
@@ -17,8 +26,7 @@ public class Board {
             coordinateX = 0;
             for (int column = 0; column < appParameters.BOARD_SIZE; column++){
                 Cell cell = new Cell(
-                        coordinateX,
-                        coordinateY,
+                        new Vector2(coordinateX, coordinateY),
                         isColored ? appParameters.BOARD_COLOR_DARK : appParameters.BOARD_COLOR_LIGHT
                 );
 
@@ -32,22 +40,57 @@ public class Board {
         }
     }
 
-    public void drawBoard(GraphicsContext gc){
-        for (int row = 0; row < appParameters.BOARD_SIZE; row++){
-            for (int column = 0; column < appParameters.BOARD_SIZE; column++) {
-                Cell currentCell = cellsMatrix[row][column];
-                currentCell.draw(gc, null);
+    private void placePieces(){
+        char[] initialPosition = appParameters.INITIAL_POSITION.toCharArray();
+        int row = 0;
+        int column = 0;
+        for (char character : initialPosition){
+            if (character == ' '){
+                break;
+            }
+            if (Character.isDigit(character)){
+                column += Character.getNumericValue(character);
+                continue;
+            }
+            if (character == '/'){
+                row += 1;
+                column = 0;
+                continue;
+            }
+            if (isNotInsideBoard(row, column)){
+                break;
+            }
+            Cell currentCell = cellsMatrix[row][column];
+            PieceShade shade = Character.isUpperCase(character) ? PieceShade.LIGHT : PieceShade.DARK;
+            for (ChessPieces piece : ChessPieces.values()){
+                if (Character.toLowerCase(character) != piece.notation){
+                    continue;
+                }
+                currentCell.setPiece(piece.createInstance(new Vector2(
+                                currentCell.coordinates.coordinateX() + appParameters.CELL_SIZE/2 - appParameters.PIECE_SIZE/2,
+                                currentCell.coordinates.coordinateY() + appParameters.CELL_SIZE/2 - appParameters.PIECE_SIZE/2
+                        ), shade
+                ));
+                break;
+            }
+            column += 1;
+        }
+    }
 
-                if (currentCell.isHighlighted()){
-                    currentCell.draw(gc, appParameters.HIGHLIGHT_COLOR);
+    public void drawBoard(GraphicsContext gc){
+        for (Cell[] cellRow : cellsMatrix){
+            for (Cell cell : cellRow){
+                cell.draw(gc, null);
+                if (cell.isHighlighted()){
+                    cell.draw(gc, appParameters.HIGHLIGHT_COLOR);
                 }
                 if (getSelectedCell() != null){
-                    if (currentCell.equals(getSelectedCell())){
-                        currentCell.draw(gc, appParameters.SELECTION_COLOR);
+                    if (cell.equals(getSelectedCell())){
+                        cell.draw(gc, appParameters.SELECTION_COLOR);
                     }
                 }
-                if (currentCell.hasAPiece()){
-                    currentCell.getPiece().draw(gc);
+                if (cell.hasAPiece()){
+                    cell.getPiece().draw(gc);
                 }
             }
         }

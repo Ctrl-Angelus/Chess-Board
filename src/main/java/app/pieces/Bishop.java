@@ -1,9 +1,11 @@
 package app.pieces;
 
+import app.utils.Vector2;
+
 public class Bishop extends Piece {
 
-    public Bishop(double coordinateX, double coordinateY, PieceShade pieceShade){
-        super(ChessPieces.BISHOP, coordinateX, coordinateY, pieceShade);
+    public Bishop(Vector2 coordinates, PieceShade pieceShade){
+        super(ChessPieces.BISHOP, coordinates, pieceShade);
     }
 
     @Override

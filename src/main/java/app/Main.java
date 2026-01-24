@@ -1,5 +1,7 @@
 package app;
 
+import app.scenes.MainScene;
+import app.utils.appParameters;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

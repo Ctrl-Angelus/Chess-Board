@@ -1,20 +1,20 @@
 package app;
 
 import app.pieces.Piece;
+import app.utils.Vector2;
+import app.utils.appParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Cell {
-    public final double coordinateX;
-    public final double coordinateY;
+    public final Vector2 coordinates;
     public final Color color;
     private Piece piece = null;
     private boolean isHighlighted = false;
     private boolean hasAPiece = false;
 
-    public Cell(double coordinateX, double coordinateY, Color color){
-        this.coordinateX = coordinateX;
-        this.coordinateY = coordinateY;
+    public Cell(Vector2 coordinates, Color color){
+        this.coordinates = coordinates;
         this.color = color;
     }
     public void toggleHighlight(){
@@ -54,8 +54,8 @@ public class Cell {
         }
         gc.setFill(color);
         gc.fillRect(
-                this.coordinateX,
-                this.coordinateY,
+                this.coordinates.coordinateX(),
+                this.coordinates.coordinateY(),
                 appParameters.CELL_SIZE,
                 appParameters.CELL_SIZE
         );
@@ -64,8 +64,8 @@ public class Cell {
     public String toString(){
         return String.format(
                 "Cell[coordinates=(%f, %f), size=%f, color=%s, isHighlighted=%b",
-                this.coordinateX,
-                this.coordinateY,
+                this.coordinates.coordinateX(),
+                this.coordinates.coordinateY(),
                 appParameters.CELL_SIZE,
                 this.color,
                 this.isHighlighted

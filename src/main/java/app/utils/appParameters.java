@@ -1,4 +1,4 @@
-package app;
+package app.utils;
 
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
@@ -19,4 +19,7 @@ public class appParameters {
 
     public static final Color BOARD_COLOR_DARK = Color.valueOf("000000FF");
     public static final Color BOARD_COLOR_LIGHT = Color.valueOf("97CAD9FF");
+
+    // Forsyth–Edwards Notation (standard initial position)
+    public static final String INITIAL_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 }

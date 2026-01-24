@@ -1,7 +1,6 @@
 package app;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class Board {
 
@@ -48,14 +47,14 @@ public class Board {
                     }
                 }
                 if (currentCell.hasAPiece()){
-                    currentCell.getPiece().draw(gc, Color.BEIGE);
+                    currentCell.getPiece().draw(gc);
                 }
             }
         }
     }
 
     public void toggleCellHighlight(int row, int column){
-        if (!isInsideBoard(row, column)){
+        if (isNotInsideBoard(row, column)){
             return;
         }
         Cell currentCell = this.cellsMatrix[row][column];
@@ -69,7 +68,7 @@ public class Board {
         return this.cellsMatrix[this.selectedCell[0]][this.selectedCell[1]];
     }
     public void setSelectedCell(int row, int column){
-        if (!isInsideBoard(row, column)){
+        if (isNotInsideBoard(row, column)){
             return;
         }
         if (this.cellsMatrix[row][column].equals(getSelectedCell())){
@@ -81,7 +80,7 @@ public class Board {
         this.selectedCell[1] = column;
     }
 
-    private boolean isInsideBoard(int row, int column){
-        return column < appParameters.BOARD_SIZE && column >= 0 && row < appParameters.BOARD_SIZE && row >= 0;
+    private boolean isNotInsideBoard(int row, int column){
+        return column >= appParameters.BOARD_SIZE || column < 0 || row >= appParameters.BOARD_SIZE || row < 0;
     }
 }

@@ -11,6 +11,14 @@ public class appParameters {
 
     public static final int NANOSECONDS = 1_000_000_000;
     public static final int FPS = 60;
+    private static boolean boardRotated = false;
+
+    public static void toggleBoardRotation(){
+        boardRotated = !boardRotated;
+    }
+    public static boolean isBoardRotated(){
+        return boardRotated;
+    }
 
     public static final String TITLE = "Chess Board JavaFX";
 

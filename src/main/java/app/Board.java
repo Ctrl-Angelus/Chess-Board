@@ -1,7 +1,7 @@
 package app;
 
 import app.pieces.ChessPieces;
-import app.pieces.PieceShade;
+import app.pieces.PieceKind;
 import app.utils.Vector2;
 import app.utils.appParameters;
 import javafx.scene.canvas.GraphicsContext;
@@ -61,7 +61,7 @@ public class Board {
                 break;
             }
             Cell currentCell = cellsMatrix[row][column];
-            PieceShade shade = Character.isUpperCase(character) ? PieceShade.LIGHT : PieceShade.DARK;
+            PieceKind shade = Character.isUpperCase(character) ? PieceKind.LIGHT : PieceKind.DARK;
             for (ChessPieces piece : ChessPieces.values()){
                 if (Character.toLowerCase(character) != piece.notation){
                     continue;

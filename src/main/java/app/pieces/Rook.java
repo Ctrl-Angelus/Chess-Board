@@ -4,7 +4,7 @@ import app.utils.Vector2;
 
 public class Rook extends Piece {
 
-    public Rook(Vector2 coordinates, PieceShade pieceShade){
+    public Rook(Vector2 coordinates, PieceKind pieceShade){
         super(ChessPieces.ROOK, coordinates, pieceShade);
     }
 

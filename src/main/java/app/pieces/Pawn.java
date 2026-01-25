@@ -4,7 +4,7 @@ import app.utils.Vector2;
 
 public class Pawn extends Piece {
 
-    public Pawn(Vector2 coordinates, PieceShade pieceShade){
+    public Pawn(Vector2 coordinates, PieceKind pieceShade){
         super(ChessPieces.PAWN, coordinates, pieceShade);
     }
 

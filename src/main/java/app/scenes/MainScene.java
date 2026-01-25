@@ -33,14 +33,13 @@ public class MainScene {
                 board.setSelectedCell(currentRow, currentCol);
 
             } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
-                System.out.println(board.getSelectedCell());
+                appParameters.toggleBoardRotation();
             }
         });
 
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 
         VBox vBox = new VBox(canvas);
-        board.drawBoard(graphicsContext);
 
         AnimationTimer timer = new AnimationTimer() {
             private long lastUpdate = 0;
@@ -48,7 +47,19 @@ public class MainScene {
             @Override
             public void handle(long now) {
                 if (now - lastUpdate >= appParameters.NANOSECONDS/appParameters.FPS) {
+                    graphicsContext.save();
+
+                    double canvasWidth = canvas.getWidth();
+                    double canvasHeight = canvas.getHeight();
+
+                    graphicsContext.translate(canvasWidth / 2, canvasHeight / 2);
+
+                    graphicsContext.rotate(appParameters.isBoardRotated() ? 180 : 0);
+
+                    graphicsContext.translate(-canvasWidth / 2, -canvasHeight / 2);
+
                     board.drawBoard(graphicsContext);
+                    graphicsContext.restore();
                     lastUpdate = now;
                 }
             }

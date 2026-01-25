@@ -15,13 +15,13 @@ public enum ChessPieces {
     public final int numericalValue;
     public final char notation;
     public final String imagePath;
-    public final BiFunction<Vector2, PieceShade, Piece> factory;
+    public final BiFunction<Vector2, PieceKind, Piece> factory;
 
     ChessPieces(
         int numericalValue,
         char notation,
         String imagePath,
-        BiFunction<Vector2, PieceShade, Piece> factory
+        BiFunction<Vector2, PieceKind, Piece> factory
     ){
         this.numericalValue = numericalValue;
         this.notation = notation;
@@ -29,7 +29,7 @@ public enum ChessPieces {
         this.factory = factory;
     }
 
-    public Piece createInstance(Vector2 coordinates, PieceShade pieceShade){
+    public Piece createInstance(Vector2 coordinates, PieceKind pieceShade){
         return this.factory.apply(coordinates, pieceShade);
     }
 }

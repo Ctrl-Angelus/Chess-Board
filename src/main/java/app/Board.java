@@ -131,6 +131,7 @@ public class Board {
 
         Cell currentCell = getIndividualCell(selectedCell[0], selectedCell[1]);
         if (!currentCell.hasAPiece()){
+            this.selectedCell = new int[] {row, column};
             return;
         }
 

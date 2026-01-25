@@ -137,6 +137,7 @@ public class Board {
         Piece piece = currentCell.getPiece();
         Cell newCell = getIndividualCell(row, column);
         if (newCell.hasAPiece()){
+            this.selectedCell = new int[] {row, column};
             return;
         }
         currentCell.removePiece();

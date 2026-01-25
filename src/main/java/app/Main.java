@@ -11,6 +11,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         MainScene mainScene = new MainScene();
         stage.setScene(mainScene.getScene());
+        stage.getIcons().add(appParameters.ICON);
         stage.setTitle(appParameters.TITLE);
         stage.show();
     }

@@ -2,7 +2,7 @@ package app;
 
 import app.pieces.Piece;
 import app.utils.Vector2;
-import app.utils.appParameters;
+import app.utils.AppParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -57,8 +57,8 @@ public class Cell {
         gc.fillRect(
                 this.coordinates.coordinateX(),
                 this.coordinates.coordinateY(),
-                appParameters.CELL_SIZE,
-                appParameters.CELL_SIZE
+                AppParameters.CELL_SIZE,
+                AppParameters.CELL_SIZE
         );
     }
     @Override
@@ -67,7 +67,7 @@ public class Cell {
                 "Cell[coordinates=(%f, %f), size=%f, color=%s, isHighlighted=%b, hasAPiece=%b",
                 this.coordinates.coordinateX(),
                 this.coordinates.coordinateY(),
-                appParameters.CELL_SIZE,
+                AppParameters.CELL_SIZE,
                 this.color,
                 this.isHighlighted,
                 this.hasAPiece

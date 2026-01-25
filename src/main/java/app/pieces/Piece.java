@@ -1,7 +1,7 @@
 package app.pieces;
 
 import app.utils.Vector2;
-import app.utils.appParameters;
+import app.utils.AppParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -19,8 +19,7 @@ public abstract class Piece {
         this.pieceKind = pieceKind;
         this.image = new Image(
             Objects.requireNonNull(
-                Piece.class.getResourceAsStream(pieceType.imagePath.replace(
-                    "%shade%", pieceKind.name().toLowerCase())
+                Piece.class.getResourceAsStream(pieceType.getImagePath(pieceKind)
                 )
             )
         );
@@ -30,8 +29,8 @@ public abstract class Piece {
         gc.save();
         gc.setImageSmoothing(false);
         gc.translate(
-            coordinates.coordinateX() + appParameters.PIECE_SIZE/2,
-            coordinates.coordinateY() + appParameters.PIECE_SIZE/2
+            coordinates.coordinateX() + AppParameters.PIECE_SIZE/2,
+            coordinates.coordinateY() + AppParameters.PIECE_SIZE/2
         );
 
         gc.rotate(
@@ -40,10 +39,10 @@ public abstract class Piece {
 
         gc.drawImage(
             this.image,
-                -appParameters.PIECE_SIZE/2,
-                -appParameters.PIECE_SIZE/2,
-            appParameters.PIECE_SIZE,
-            appParameters.PIECE_SIZE
+                -AppParameters.PIECE_SIZE/2,
+                -AppParameters.PIECE_SIZE/2,
+            AppParameters.PIECE_SIZE,
+            AppParameters.PIECE_SIZE
         );
         gc.restore();
     }

@@ -32,4 +32,8 @@ public enum ChessPieces {
     public Piece createInstance(Vector2 coordinates, PieceKind pieceShade){
         return this.factory.apply(coordinates, pieceShade);
     }
+
+    public String getImagePath(PieceKind pieceKind){
+        return imagePath.replace("%shade%", pieceKind.getShade());
+    }
 }

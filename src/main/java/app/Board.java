@@ -4,12 +4,13 @@ import app.pieces.ChessPieces;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.Vector2;
-import app.utils.appParameters;
+import app.utils.AppParameters;
+import app.utils.AppColors;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Board {
 
-    private final Cell[][] cellsMatrix = new Cell[appParameters.BOARD_SIZE][appParameters.BOARD_SIZE];
+    private final Cell[][] cellsMatrix = new Cell[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
 
     private int[] selectedCell = null;
 
@@ -23,26 +24,26 @@ public class Board {
         double coordinateY = 0;
         boolean isColored = false;
 
-        for (int row = 0; row < appParameters.BOARD_SIZE; row++) {
+        for (int row = 0; row < AppParameters.BOARD_SIZE; row++) {
             coordinateX = 0;
-            for (int column = 0; column < appParameters.BOARD_SIZE; column++){
+            for (int column = 0; column < AppParameters.BOARD_SIZE; column++){
                 Cell cell = new Cell(
                         new Vector2(coordinateX, coordinateY),
-                        isColored ? appParameters.BOARD_COLOR_DARK : appParameters.BOARD_COLOR_LIGHT
+                        isColored ? AppColors.BOARD_COLOR_DARK : AppColors.BOARD_COLOR_LIGHT
                 );
 
                 cellsMatrix[row][column] = cell;
 
-                coordinateX += appParameters.CELL_SIZE;
+                coordinateX += AppParameters.CELL_SIZE;
                 isColored = !isColored;
             }
-            isColored = cellsMatrix[row][0].color == appParameters.BOARD_COLOR_LIGHT;
-            coordinateY += appParameters.CELL_SIZE;
+            isColored = cellsMatrix[row][0].color == AppColors.BOARD_COLOR_LIGHT;
+            coordinateY += AppParameters.CELL_SIZE;
         }
     }
 
     private void placePieces(){
-        char[] initialPosition = appParameters.INITIAL_POSITION.toCharArray();
+        char[] initialPosition = AppParameters.INITIAL_POSITION.toCharArray();
         int row = 0;
         int column = 0;
         for (char character : initialPosition){
@@ -82,11 +83,11 @@ public class Board {
             for (Cell cell : cellRow){
                 cell.draw(gc, null);
                 if (cell.isHighlighted()){
-                    cell.draw(gc, appParameters.HIGHLIGHT_COLOR);
+                    cell.draw(gc, AppColors.HIGHLIGHT_COLOR);
                 }
                 if (getSelectedCell() != null){
                     if (cell.equals(getSelectedCell())){
-                        cell.draw(gc, appParameters.SELECTION_COLOR);
+                        cell.draw(gc, AppColors.SELECTION_COLOR);
                     }
                 }
                 if (cell.hasAPiece()){
@@ -112,8 +113,8 @@ public class Board {
     }
     public Vector2 getPiecePosition(Vector2 cellPosition){
         return new Vector2(
-            cellPosition.coordinateX() + appParameters.CELL_SIZE/2 - appParameters.PIECE_SIZE/2,
-            cellPosition.coordinateY() + appParameters.CELL_SIZE/2 - appParameters.PIECE_SIZE/2
+            cellPosition.coordinateX() + AppParameters.CELL_SIZE/2 - AppParameters.PIECE_SIZE/2,
+            cellPosition.coordinateY() + AppParameters.CELL_SIZE/2 - AppParameters.PIECE_SIZE/2
         );
     }
     public void setSelectedCell(int row, int column){
@@ -160,6 +161,6 @@ public class Board {
     }
 
     private boolean isNotInsideBoard(int row, int column){
-        return column >= appParameters.BOARD_SIZE || column < 0 || row >= appParameters.BOARD_SIZE || row < 0;
+        return column >= AppParameters.BOARD_SIZE || column < 0 || row >= AppParameters.BOARD_SIZE || row < 0;
     }
 }

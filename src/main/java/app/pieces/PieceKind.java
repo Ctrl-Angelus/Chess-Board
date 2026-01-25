@@ -9,4 +9,8 @@ public enum PieceKind {
     PieceKind(int rotationAngle){
         this.rotationAngle = rotationAngle;
     }
+
+    public String getShade(){
+        return name().toLowerCase();
+    }
 }

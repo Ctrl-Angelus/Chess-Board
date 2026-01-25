@@ -42,6 +42,7 @@ public class Cell {
         if (this.hasAPiece()){
             this.piece = null;
         }
+        this.togglePieceContent();
     }
 
     public Piece getPiece() {
@@ -63,12 +64,13 @@ public class Cell {
     @Override
     public String toString(){
         return String.format(
-                "Cell[coordinates=(%f, %f), size=%f, color=%s, isHighlighted=%b",
+                "Cell[coordinates=(%f, %f), size=%f, color=%s, isHighlighted=%b, hasAPiece=%b",
                 this.coordinates.coordinateX(),
                 this.coordinates.coordinateY(),
                 appParameters.CELL_SIZE,
                 this.color,
-                this.isHighlighted
+                this.isHighlighted,
+                this.hasAPiece
         );
     }
 }

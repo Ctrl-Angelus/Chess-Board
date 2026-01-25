@@ -26,6 +26,11 @@ public class MainScene {
             int currentCol = (int) (coordinateX / appParameters.CELL_SIZE);
             int currentRow = (int) (coordinateY / appParameters.CELL_SIZE);
 
+            if (appParameters.isBoardRotated()){
+                currentCol = appParameters.BOARD_SIZE - currentCol - 1;
+                currentRow = appParameters.BOARD_SIZE - currentRow - 1;
+            }
+
             if (mouseEvent.getButton() == MouseButton.SECONDARY){
                 board.toggleCellHighlight(currentRow, currentCol);
 

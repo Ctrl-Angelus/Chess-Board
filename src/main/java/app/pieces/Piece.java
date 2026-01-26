@@ -25,12 +25,14 @@ public abstract class Piece {
         );
     }
 
-    public void draw(GraphicsContext gc){
+    public void draw(GraphicsContext gc, Vector2 alternativeCoordinates){
+        boolean useAlternativeCoordinates = (alternativeCoordinates != null);
+
         gc.save();
         gc.setImageSmoothing(false);
         gc.translate(
-            coordinates.coordinateX() + AppParameters.PIECE_SIZE/2,
-            coordinates.coordinateY() + AppParameters.PIECE_SIZE/2
+            (useAlternativeCoordinates) ? alternativeCoordinates.coordinateX() : coordinates.coordinateX() + AppParameters.PIECE_SIZE/2,
+            (useAlternativeCoordinates) ? alternativeCoordinates.coordinateY() : coordinates.coordinateY() + AppParameters.PIECE_SIZE/2
         );
 
         gc.rotate(

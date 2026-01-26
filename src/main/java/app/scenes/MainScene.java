@@ -2,6 +2,7 @@ package app.scenes;
 
 import app.Board;
 import app.utils.AppParameters;
+import app.utils.Vector2;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -11,6 +12,7 @@ import javafx.scene.layout.VBox;
 
 public class MainScene {
     private final Scene scene;
+    private Vector2 mouseCoordinates = null;
 
     public MainScene(){
         Canvas canvas = new Canvas(
@@ -19,7 +21,7 @@ public class MainScene {
         );
         Board board = new Board();
 
-        canvas.setOnMouseClicked(mouseEvent -> {
+        canvas.setOnMousePressed(mouseEvent -> {
             double coordinateX = mouseEvent.getSceneX();
             double coordinateY = mouseEvent.getSceneY();
 
@@ -39,6 +41,48 @@ public class MainScene {
 
             } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
                 AppParameters.toggleBoardRotation();
+            }
+        });
+        canvas.setOnMouseDragged(mouseEvent -> {
+            double mouseX = mouseEvent.getSceneX();
+            double mouseY = mouseEvent.getSceneY();
+
+            if (mouseEvent.getButton() == MouseButton.PRIMARY){
+                if (board.getSelectedCell() == null){
+                    return;
+                }
+                if (!board.getSelectedCell().hasAPiece()){
+                    return;
+                }
+
+                if (AppParameters.isBoardRotated()){
+                    mouseX = AppParameters.APP_SIZE - mouseX;
+                    mouseY = AppParameters.APP_SIZE - mouseY;
+                }
+
+                mouseCoordinates = new Vector2(
+                    mouseX,
+                    mouseY
+                );
+                board.pieceDragging = true;
+            }
+        });
+        canvas.setOnMouseReleased(mouseEvent -> {
+            System.out.println("released");
+            double coordinateX = mouseEvent.getSceneX();
+            double coordinateY = mouseEvent.getSceneY();
+
+            int currentCol = (int) (coordinateX / AppParameters.CELL_SIZE);
+            int currentRow = (int) (coordinateY / AppParameters.CELL_SIZE);
+
+            if (AppParameters.isBoardRotated()){
+                currentCol = AppParameters.BOARD_SIZE - currentCol - 1;
+                currentRow = AppParameters.BOARD_SIZE - currentRow - 1;
+            }
+
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                board.setSelectedCell(currentRow, currentCol);
+                board.pieceDragging = false;
             }
         });
 
@@ -63,7 +107,7 @@ public class MainScene {
 
                     graphicsContext.translate(-canvasWidth / 2, -canvasHeight / 2);
 
-                    board.drawBoard(graphicsContext);
+                    board.drawBoard(graphicsContext, mouseCoordinates);
                     graphicsContext.restore();
                     lastUpdate = now;
                 }

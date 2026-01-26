@@ -11,6 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
 public class Board {
 
     private final Cell[][] cellsMatrix = new Cell[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
+    public boolean pieceDragging = false;
 
     private int[] selectedCell = null;
 
@@ -78,22 +79,30 @@ public class Board {
         return this.cellsMatrix[row][column];
     }
 
-    public void drawBoard(GraphicsContext gc){
+    public void drawBoard(GraphicsContext gc, Vector2 mouseCoordinates){
         for (Cell[] cellRow : cellsMatrix){
             for (Cell cell : cellRow){
                 cell.draw(gc, null);
+                boolean isSelectedCell = false;
                 if (cell.isHighlighted()){
                     cell.draw(gc, AppColors.HIGHLIGHT_COLOR);
                 }
                 if (getSelectedCell() != null){
                     if (cell.equals(getSelectedCell())){
                         cell.draw(gc, AppColors.SELECTION_COLOR);
+                        isSelectedCell = true;
                     }
                 }
                 if (cell.hasAPiece()){
-                    cell.getPiece().draw(gc);
+                    if (isSelectedCell && pieceDragging){
+                        continue;
+                    }
+                    cell.getPiece().draw(gc, null);
                 }
             }
+        }
+        if (pieceDragging){
+            getSelectedCell().getPiece().draw(gc, mouseCoordinates);
         }
     }
 
@@ -157,7 +166,7 @@ public class Board {
             newCell.setPiece(newPiece);
             break;
         }
-        this.selectedCell = new int[] {row, column};
+        this.selectedCell = null;
     }
 
     private boolean isNotInsideBoard(int row, int column){

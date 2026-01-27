@@ -5,12 +5,12 @@ import app.utils.Vector2;
 import java.util.function.BiFunction;
 
 public enum ChessPieces {
-    PAWN(1, 'p', "/images/%shade%/pawn.png", Pawn::new),
-    ROOK(5, 'r', "/images/%shade%/rook.png", Rook::new),
-    KNIGHT(3, 'n', "/images/%shade%/knight.png", Knight::new),
-    BISHOP(3, 'b', "/images/%shade%/bishop.png", Bishop::new),
-    QUEEN(9, 'q', "/images/%shade%/queen.png", Queen::new),
-    KING(0, 'k', "/images/%shade%/king.png", King::new);
+    PAWN(1, 'p', Pawn::new),
+    ROOK(5, 'r', Rook::new),
+    KNIGHT(3, 'n', Knight::new),
+    BISHOP(3, 'b', Bishop::new),
+    QUEEN(9, 'q', Queen::new),
+    KING(0, 'k', King::new);
 
     public final int numericalValue;
     public final char notation;
@@ -20,12 +20,11 @@ public enum ChessPieces {
     ChessPieces(
         int numericalValue,
         char notation,
-        String imagePath,
         BiFunction<Vector2, PieceKind, Piece> factory
     ){
         this.numericalValue = numericalValue;
         this.notation = notation;
-        this.imagePath = imagePath;
+        this.imagePath = String.format("/images/#shade#/%s.png", name().toLowerCase());
         this.factory = factory;
     }
 
@@ -34,6 +33,6 @@ public enum ChessPieces {
     }
 
     public String getImagePath(PieceKind pieceKind){
-        return imagePath.replace("%shade%", pieceKind.getShade());
+        return imagePath.replace("#shade#", pieceKind.getShade());
     }
 }

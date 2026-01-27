@@ -34,10 +34,10 @@ public class MainScene {
             }
 
             if (mouseEvent.getButton() == MouseButton.SECONDARY){
-                board.toggleCellHighlight(currentRow, currentCol);
+                board.toggleTileHighlight(currentRow, currentCol);
 
             } else if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                board.setSelectedCell(currentRow, currentCol);
+                board.selectTile(currentRow, currentCol);
 
             } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
                 AppParameters.toggleBoardRotation();
@@ -48,10 +48,10 @@ public class MainScene {
             double mouseY = mouseEvent.getSceneY();
 
             if (mouseEvent.getButton() == MouseButton.PRIMARY){
-                if (board.getSelectedCell() == null){
+                if (board.getSelectedTile() == null){
                     return;
                 }
-                if (!board.getSelectedCell().hasAPiece()){
+                if (!board.getSelectedTile().hasAPiece()){
                     return;
                 }
 
@@ -68,7 +68,6 @@ public class MainScene {
             }
         });
         canvas.setOnMouseReleased(mouseEvent -> {
-            System.out.println("released");
             double coordinateX = mouseEvent.getSceneX();
             double coordinateY = mouseEvent.getSceneY();
 
@@ -81,7 +80,7 @@ public class MainScene {
             }
 
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                board.setSelectedCell(currentRow, currentCol);
+                board.selectTile(currentRow, currentCol);
                 board.pieceDragging = false;
             }
         });

@@ -5,15 +5,14 @@ import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.Vector2;
 import app.utils.AppParameters;
-import app.utils.AppColors;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Board {
 
-    private final Cell[][] cellsMatrix = new Cell[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
+    private final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
     public boolean pieceDragging = false;
 
-    private int[] selectedCell = null;
+    private Tile selectedTile = null;
 
     public Board(){
         this.createBoard();
@@ -28,17 +27,17 @@ public class Board {
         for (int row = 0; row < AppParameters.BOARD_SIZE; row++) {
             coordinateX = 0;
             for (int column = 0; column < AppParameters.BOARD_SIZE; column++){
-                Cell cell = new Cell(
-                        new Vector2(coordinateX, coordinateY),
-                        isColored ? AppColors.BOARD_COLOR_DARK : AppColors.BOARD_COLOR_LIGHT
+                Tile tile = new Tile(
+                    new Vector2(coordinateX, coordinateY),
+                    isColored ? TileType.DARK : TileType.LIGHT
                 );
 
-                cellsMatrix[row][column] = cell;
+                tilesMatrix[row][column] = tile;
 
                 coordinateX += AppParameters.CELL_SIZE;
                 isColored = !isColored;
             }
-            isColored = cellsMatrix[row][0].color == AppColors.BOARD_COLOR_LIGHT;
+            isColored = tilesMatrix[row][0].type == TileType.LIGHT;
             coordinateY += AppParameters.CELL_SIZE;
         }
     }
@@ -63,95 +62,96 @@ public class Board {
             if (isNotInsideBoard(row, column)){
                 break;
             }
-            Cell currentCell = cellsMatrix[row][column];
+            Tile currentTile = getIndividualTile(row, column);
             PieceKind kind = Character.isUpperCase(character) ? PieceKind.LIGHT : PieceKind.DARK;
             for (ChessPieces piece : ChessPieces.values()){
                 if (Character.toLowerCase(character) != piece.notation){
                     continue;
                 }
-                currentCell.setPiece(piece.createInstance(getPiecePosition(currentCell.coordinates), kind));
+                currentTile.setPiece(piece.createInstance(currentTile.getPiecePosition(), kind));
                 break;
             }
             column += 1;
         }
     }
-    public Cell getIndividualCell(int row, int column){
-        return this.cellsMatrix[row][column];
+    public Tile getIndividualTile(int row, int column){
+        return this.tilesMatrix[row][column];
     }
 
     public void drawBoard(GraphicsContext gc, Vector2 mouseCoordinates){
-        for (Cell[] cellRow : cellsMatrix){
-            for (Cell cell : cellRow){
-                cell.draw(gc, null);
-                boolean isSelectedCell = false;
-                if (cell.isHighlighted()){
-                    cell.draw(gc, AppColors.HIGHLIGHT_COLOR);
+        for (Tile[] tileRow : tilesMatrix){
+            for (Tile tile : tileRow){
+                tile.draw(gc);
+                boolean isSelectedTile = false;
+                if (getSelectedTile() != null){
+                    isSelectedTile = tile.isSelected();
                 }
-                if (getSelectedCell() != null){
-                    if (cell.equals(getSelectedCell())){
-                        cell.draw(gc, AppColors.SELECTION_COLOR);
-                        isSelectedCell = true;
-                    }
-                }
-                if (cell.hasAPiece()){
-                    if (isSelectedCell && pieceDragging){
+                if (tile.hasAPiece()){
+                    if (isSelectedTile && pieceDragging){
                         continue;
                     }
-                    cell.getPiece().draw(gc, null);
+                    tile.getPiece().draw(gc, null);
                 }
             }
         }
         if (pieceDragging){
-            getSelectedCell().getPiece().draw(gc, mouseCoordinates);
+            getSelectedTile().getPiece().draw(gc, mouseCoordinates);
         }
     }
 
-    public void toggleCellHighlight(int row, int column){
+    public void toggleTileHighlight(int row, int column){
         if (isNotInsideBoard(row, column)){
             return;
         }
-        Cell currentCell = getIndividualCell(row, column);
-        currentCell.toggleHighlight();
+        getIndividualTile(row, column).toggleHighlight();
     }
 
-    public Cell getSelectedCell(){
-        if (this.selectedCell == null){
+    public Tile getSelectedTile(){
+        if (this.selectedTile == null){
             return null;
         }
-        return getIndividualCell(this.selectedCell[0],this.selectedCell[1]);
+        return selectedTile;
     }
-    public Vector2 getPiecePosition(Vector2 cellPosition){
-        return new Vector2(
-            cellPosition.coordinateX() + AppParameters.CELL_SIZE/2 - AppParameters.PIECE_SIZE/2,
-            cellPosition.coordinateY() + AppParameters.CELL_SIZE/2 - AppParameters.PIECE_SIZE/2
-        );
-    }
-    public void setSelectedCell(int row, int column){
+    public void setSelectedTile(int row, int column){
         if (isNotInsideBoard(row, column)){
             return;
         }
-        if (getIndividualCell(row, column).equals(getSelectedCell())){
-            this.selectedCell = null;
+        if (selectedTile != null){
+            selectedTile.toggleSelection();
+        }
+        this.selectedTile = getIndividualTile(row, column);
+        selectedTile.toggleSelection();
+    }
+    public void setSelectedTileNull(){
+        selectedTile.toggleSelection();
+        this.selectedTile = null;
+    }
+
+    public void selectTile(int row, int column){
+        if (isNotInsideBoard(row, column)){
             return;
         }
-        if (selectedCell == null){
-            this.selectedCell = new int[] {row, column};
+        if (getIndividualTile(row, column).equals(getSelectedTile())){
+            setSelectedTileNull();
+            return;
+        }
+        if (selectedTile == null){
+            setSelectedTile(row, column);
             return;
         }
 
-        Cell currentCell = getIndividualCell(selectedCell[0], selectedCell[1]);
-        if (!currentCell.hasAPiece()){
-            this.selectedCell = new int[] {row, column};
+        if (!selectedTile.hasAPiece()){
+            setSelectedTile(row, column);
             return;
         }
 
-        Piece piece = currentCell.getPiece();
-        Cell newCell = getIndividualCell(row, column);
-        if (newCell.hasAPiece()){
-            this.selectedCell = new int[] {row, column};
+        Piece piece = selectedTile.getPiece();
+        Tile newTile = getIndividualTile(row, column);
+        if (newTile.hasAPiece()){
+            setSelectedTile(row, column);
             return;
         }
-        currentCell.removePiece();
+        selectedTile.removePiece();
 
         // TODO: CALL THE MOVE METHOD OF THE PIECE
 
@@ -160,13 +160,13 @@ public class Board {
                 continue;
             }
             Piece newPiece = chessPiece.createInstance(
-                getPiecePosition(newCell.coordinates),
+                newTile.getPiecePosition(),
                 piece.pieceKind
             );
-            newCell.setPiece(newPiece);
+            newTile.setPiece(newPiece);
             break;
         }
-        this.selectedCell = null;
+        setSelectedTileNull();
     }
 
     private boolean isNotInsideBoard(int row, int column){

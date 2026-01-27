@@ -57,7 +57,6 @@ public class Tile {
     }
 
     public void draw(GraphicsContext gc){
-
         Image image = type.getImage();
 
         if (isHighlighted()){ image = TileType.HIGHLIGHT.getImage(); }
@@ -68,15 +67,15 @@ public class Tile {
                 image,
                 coordinates.coordinateX(),
                 coordinates.coordinateY(),
-                AppParameters.CELL_SIZE,
-                AppParameters.CELL_SIZE
+                AppParameters.TILE_SIZE,
+                AppParameters.TILE_SIZE
         );
     }
 
     public Vector2 getPiecePosition(){
         return new Vector2(
-            coordinates.coordinateX() + AppParameters.CELL_SIZE/2 - AppParameters.PIECE_SIZE/2,
-            coordinates.coordinateY() + AppParameters.CELL_SIZE/2 - AppParameters.PIECE_SIZE/2
+            coordinates.coordinateX() + AppParameters.TILE_SIZE /2 - AppParameters.PIECE_SIZE/2,
+            coordinates.coordinateY() + AppParameters.TILE_SIZE /2 - AppParameters.PIECE_SIZE/2
         );
     }
 
@@ -85,7 +84,7 @@ public class Tile {
         return String.format(
                 "Tile[%s, size=%f, color=%s, isHighlighted=%b, hasAPiece=%b",
                 this.coordinates,
-                AppParameters.CELL_SIZE,
+                AppParameters.TILE_SIZE,
                 this.type,
                 this.isHighlighted,
                 this.hasAPiece

@@ -25,8 +25,8 @@ public class MainScene {
             double coordinateX = mouseEvent.getSceneX();
             double coordinateY = mouseEvent.getSceneY();
 
-            int currentCol = (int) (coordinateX / AppParameters.CELL_SIZE);
-            int currentRow = (int) (coordinateY / AppParameters.CELL_SIZE);
+            int currentCol = (int) (coordinateX / AppParameters.TILE_SIZE);
+            int currentRow = (int) (coordinateY / AppParameters.TILE_SIZE);
 
             if (AppParameters.isBoardRotated()){
                 currentCol = AppParameters.BOARD_SIZE - currentCol - 1;
@@ -71,8 +71,8 @@ public class MainScene {
             double coordinateX = mouseEvent.getSceneX();
             double coordinateY = mouseEvent.getSceneY();
 
-            int currentCol = (int) (coordinateX / AppParameters.CELL_SIZE);
-            int currentRow = (int) (coordinateY / AppParameters.CELL_SIZE);
+            int currentCol = (int) (coordinateX / AppParameters.TILE_SIZE);
+            int currentRow = (int) (coordinateY / AppParameters.TILE_SIZE);
 
             if (AppParameters.isBoardRotated()){
                 currentCol = AppParameters.BOARD_SIZE - currentCol - 1;

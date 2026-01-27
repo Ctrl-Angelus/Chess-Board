@@ -34,11 +34,11 @@ public class Board {
 
                 tilesMatrix[row][column] = tile;
 
-                coordinateX += AppParameters.CELL_SIZE;
+                coordinateX += AppParameters.TILE_SIZE;
                 isColored = !isColored;
             }
             isColored = tilesMatrix[row][0].type == TileType.LIGHT;
-            coordinateY += AppParameters.CELL_SIZE;
+            coordinateY += AppParameters.TILE_SIZE;
         }
     }
 

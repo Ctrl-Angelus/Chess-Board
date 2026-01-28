@@ -36,7 +36,7 @@ public abstract class Piece {
         );
 
         gc.rotate(
-            this.pieceKind.rotationAngle
+            AppParameters.isBoardRotated() ? 180 : 0
         );
 
         gc.drawImage(

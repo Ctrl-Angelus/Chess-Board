@@ -94,7 +94,10 @@ public class Board {
                 }
             }
         }
-        if (pieceDragging){
+        if (getSelectedTile() == null){
+            return;
+        }
+        if (pieceDragging && getSelectedTile().hasAPiece()){
             getSelectedTile().getPiece().draw(gc, mouseCoordinates);
         }
     }

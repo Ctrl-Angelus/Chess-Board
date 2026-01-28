@@ -57,10 +57,7 @@ public class Tile {
     }
 
     public void draw(GraphicsContext gc){
-        Image image = type.getImage();
-
-        if (isHighlighted()){ image = TileType.HIGHLIGHT.getImage(); }
-        if (isSelected()){ image = TileType.SELECTION.getImage(); }
+        Image image = (isSelected()) ? TileType.SELECTION.getImage() : type.getImage();
 
         gc.setImageSmoothing(false);
         gc.drawImage(
@@ -70,6 +67,15 @@ public class Tile {
                 AppParameters.TILE_SIZE,
                 AppParameters.TILE_SIZE
         );
+        if (isHighlighted()){
+            gc.drawImage(
+                TileType.HIGHLIGHT.getImage(),
+                coordinates.coordinateX(),
+                coordinates.coordinateY(),
+                AppParameters.TILE_SIZE,
+                AppParameters.TILE_SIZE
+            );
+        }
     }
 
     public Vector2 getPiecePosition(){

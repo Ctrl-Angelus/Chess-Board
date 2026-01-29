@@ -1,11 +1,11 @@
 package app.pieces;
 
+import app.utils.AppImages;
+import app.utils.AppState;
 import app.utils.Vector2;
 import app.utils.AppParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-
-import java.util.Objects;
 
 public abstract class Piece {
     public final ChessPieces pieceType;
@@ -17,11 +17,11 @@ public abstract class Piece {
         this.pieceType = pieceType;
         this.coordinates = coordinates;
         this.pieceKind = pieceKind;
-        this.image = new Image(
-            Objects.requireNonNull(
-                Piece.class.getResourceAsStream(pieceType.getImagePath(pieceKind)
-                )
-            )
+        this.image = AppImages.getImage(
+            pieceType.getImagePath(pieceKind),
+            AppParameters.PIECE_SIZE,
+            AppParameters.PIECE_SIZE,
+            false
         );
     }
 
@@ -36,15 +36,13 @@ public abstract class Piece {
         );
 
         gc.rotate(
-            AppParameters.isBoardRotated() ? 180 : 0
+            AppState.isBoardRotated() ? 180 : 0
         );
 
         gc.drawImage(
             this.image,
                 -AppParameters.PIECE_SIZE/2,
-                -AppParameters.PIECE_SIZE/2,
-            AppParameters.PIECE_SIZE,
-            AppParameters.PIECE_SIZE
+                -AppParameters.PIECE_SIZE/2
         );
         gc.restore();
     }

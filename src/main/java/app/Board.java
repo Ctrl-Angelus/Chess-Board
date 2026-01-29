@@ -3,6 +3,7 @@ package app;
 import app.pieces.ChessPieces;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
+import app.utils.AppState;
 import app.utils.Vector2;
 import app.utils.AppParameters;
 import javafx.scene.canvas.GraphicsContext;
@@ -78,7 +79,7 @@ public class Board {
         return this.tilesMatrix[row][column];
     }
 
-    public void drawBoard(GraphicsContext gc, Vector2 mouseCoordinates){
+    public void drawBoard(GraphicsContext gc){
         for (Tile[] tileRow : tilesMatrix){
             for (Tile tile : tileRow){
                 tile.draw(gc);
@@ -98,7 +99,7 @@ public class Board {
             return;
         }
         if (pieceDragging && getSelectedTile().hasAPiece()){
-            getSelectedTile().getPiece().draw(gc, mouseCoordinates);
+            getSelectedTile().getPiece().draw(gc, AppState.getMousePosition());
         }
     }
 

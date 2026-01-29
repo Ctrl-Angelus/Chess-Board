@@ -63,17 +63,13 @@ public class Tile {
         gc.drawImage(
                 image,
                 coordinates.coordinateX(),
-                coordinates.coordinateY(),
-                AppParameters.TILE_SIZE,
-                AppParameters.TILE_SIZE
+                coordinates.coordinateY()
         );
         if (isHighlighted()){
             gc.drawImage(
                 TileType.HIGHLIGHT.getImage(),
                 coordinates.coordinateX(),
-                coordinates.coordinateY(),
-                AppParameters.TILE_SIZE,
-                AppParameters.TILE_SIZE
+                coordinates.coordinateY()
             );
         }
     }

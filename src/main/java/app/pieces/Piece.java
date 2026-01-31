@@ -1,9 +1,6 @@
 package app.pieces;
 
-import app.utils.AppImages;
-import app.utils.AppState;
-import app.utils.Vector2;
-import app.utils.AppParameters;
+import app.utils.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -47,5 +44,12 @@ public abstract class Piece {
         gc.restore();
     }
 
-    public abstract void move();
+    public static Vector2 getPiecePosition(Vector2 cellCoordinates){
+        return new Vector2(
+                cellCoordinates.coordinateX() + AppParameters.TILE_SIZE /2 - AppParameters.PIECE_SIZE/2,
+                cellCoordinates.coordinateY() + AppParameters.TILE_SIZE /2 - AppParameters.PIECE_SIZE/2
+        );
+    }
+
+    public abstract boolean canMove(Position actualPosition, Position newPosition);
 }

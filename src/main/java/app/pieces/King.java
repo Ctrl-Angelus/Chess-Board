@@ -1,5 +1,6 @@
 package app.pieces;
 
+import app.utils.Position;
 import app.utils.Vector2;
 
 public class King extends Piece {
@@ -9,7 +10,7 @@ public class King extends Piece {
     }
 
     @Override
-    public void move() {
-
+    public boolean canMove(Position actualPosition, Position newPosition) {
+        return false;
     }
 }

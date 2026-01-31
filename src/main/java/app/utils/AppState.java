@@ -21,4 +21,11 @@ public class AppState {
     public static void setMousePosition(Vector2 newMousePosition) {
         mousePosition = newMousePosition;
     }
+
+    public static void deleteMousePosition(){
+        mousePosition = null;
+    }
+
+    public static int whiteScore = 0;
+    public static int blackScore = 0;
 }

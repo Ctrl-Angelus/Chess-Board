@@ -41,12 +41,11 @@ public class AppEvents {
                 AppState.toggleBoardRotation();
             }
             if (mouseEvent.getButton() == MouseButton.SECONDARY){
-                AppState.board.toggleTileHighlight(boardPosition.row(), boardPosition.column());
-
+                AppState.board.toggleTileHighlight(boardPosition);
             }
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 if (!AppState.board.pieceDragging){
-                    AppState.board.selectTile(boardPosition.row(), boardPosition.column());
+                    AppState.board.selectTile(boardPosition);
                 }
             }
         });
@@ -55,14 +54,15 @@ public class AppEvents {
 
             if (mouseEvent.getButton() == MouseButton.PRIMARY){
                 if (AppState.board.getSelectedTile() == null){
-                    AppState.board.selectTile(boardPosition.row(), boardPosition.column());
+                    AppState.board.selectTile(boardPosition);
                 }
-                if (!AppState.board.getSelectedTile().hasAPiece()){
+                if (AppState.board.getSelectedPiece() == null){
                     AppState.board.pieceDragging = false;
+                    AppState.deleteMousePosition();
                     return;
                 }
                 if (!AppState.board.pieceDragging){
-                    AppState.board.selectTile(boardPosition.row(), boardPosition.column());
+                    AppState.board.selectTile(boardPosition);
                 }
 
                 AppState.setMousePosition(getMouseCoordinates(mouseEvent, AppState.isBoardRotated()));
@@ -76,8 +76,9 @@ public class AppEvents {
                     return;
                 }
                 Position boardPosition = getBoardPosition(mouseEvent, AppState.isBoardRotated());
-                AppState.board.selectTile(boardPosition.row(), boardPosition.column());
+                AppState.board.selectTile(boardPosition);
                 AppState.board.pieceDragging = false;
+                AppState.deleteMousePosition();
             }
         });
     }

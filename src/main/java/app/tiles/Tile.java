@@ -1,4 +1,4 @@
-package app;
+package app.tiles;
 
 import app.utils.Position;
 import app.utils.Vector2;
@@ -22,18 +22,17 @@ public class Tile {
 
     public void draw(GraphicsContext gc, TileType type){
 
-
         gc.setImageSmoothing(false);
         gc.drawImage(
-                type.getImage(),
-                coordinates.coordinateX(),
-                coordinates.coordinateY()
+            type.getImage(),
+            coordinates.coordinateX(),
+            coordinates.coordinateY()
         );
         if (isHighlighted && type != TileType.SELECTION){
             gc.drawImage(
-                    TileType.HIGHLIGHT.getImage(),
-                    coordinates.coordinateX(),
-                    coordinates.coordinateY()
+                TileType.HIGHLIGHT.getImage(),
+                coordinates.coordinateX(),
+                coordinates.coordinateY()
             );
         }
     }

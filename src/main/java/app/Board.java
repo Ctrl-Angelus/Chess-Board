@@ -3,6 +3,8 @@ package app;
 import app.pieces.ChessPieces;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
+import app.tiles.Tile;
+import app.tiles.TileType;
 import app.utils.AppState;
 import app.utils.Position;
 import app.utils.Vector2;
@@ -11,15 +13,15 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class Board {
 
-    private final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
-    private final Piece[][] piecesMatrix = new Piece[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
+    private Tile[][] tilesMatrix;
+    private Piece[][] piecesMatrix;
     public boolean pieceDragging = false;
 
     private Position selectedTile = null;
 
     public Board(){
         this.createBoard();
-        this.placePieces();
+        this.placePieces(AppParameters.INITIAL_POSITION);
     }
 
     public Tile[][] getTilesMatrix() {
@@ -27,6 +29,7 @@ public class Board {
     }
 
     private void createBoard(){
+        tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
         double coordinateX;
         double coordinateY = 0;
         boolean isColored = false;
@@ -50,8 +53,9 @@ public class Board {
         }
     }
 
-    private void placePieces(){
-        char[] initialPosition = AppParameters.INITIAL_POSITION.toCharArray();
+    private void placePieces(String pieceConfiguration){
+        piecesMatrix = new Piece[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
+        char[] initialPosition = pieceConfiguration.toCharArray();
         int row = 0;
         int column = 0;
         for (char character : initialPosition){
@@ -82,6 +86,7 @@ public class Board {
         }
     }
     public Tile getIndividualTile(Position position){
+        if (position == null){return null;}
         return this.tilesMatrix[position.row()][position.column()];
     }
 
@@ -161,12 +166,12 @@ public class Board {
             return;
         }
 
-        if (getSelectedPiece() == null){
+        Piece piece = getSelectedPiece();
+
+        if (piece.pieceKind != AppState.getActivePieces()){
             setSelectedTile(givenPosition);
             return;
         }
-
-        Piece piece = getSelectedPiece();
 
         if (!piece.canMove(
             selectedTile,
@@ -177,14 +182,20 @@ public class Board {
         }
 
         if (getIndividualPiece(givenPosition) != null){
+            if (piece.pieceKind == getIndividualPiece(givenPosition).pieceKind){
+                setSelectedTile(givenPosition);
+                return;
+            }
+
             if (piece.pieceKind == PieceKind.LIGHT){
                 AppState.whiteScore += getIndividualPiece(givenPosition).pieceType.numericalValue;
             } else {
                 AppState.blackScore += getIndividualPiece(givenPosition).pieceType.numericalValue;
             }
-            System.out.println("Black Score: " + AppState.blackScore);
-            System.out.println("White Score: " + AppState.whiteScore);
         }
+
+        AppState.toggleActivePieces();
+        System.out.println(AppState.getActivePieces());
 
         for (ChessPieces chessPiece : ChessPieces.values()){
             if (piece.pieceType != chessPiece){
@@ -198,9 +209,7 @@ public class Board {
             piecesMatrix[selectedTile.row()][selectedTile.column()] = null;
             break;
         }
-        if (!pieceDragging){
-            setSelectedTile(givenPosition);
-        }
+        selectedTile = null;
     }
 
     private boolean isNotInsideBoard(Position position){

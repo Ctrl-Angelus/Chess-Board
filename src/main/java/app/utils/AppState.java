@@ -1,6 +1,7 @@
 package app.utils;
 
 import app.Board;
+import app.pieces.PieceKind;
 
 public class AppState {
     private static boolean boardRotated = false;
@@ -28,4 +29,18 @@ public class AppState {
 
     public static int whiteScore = 0;
     public static int blackScore = 0;
+
+    private static PieceKind activePieces = PieceKind.LIGHT;
+
+    public static PieceKind getActivePieces() {
+        return activePieces;
+    }
+
+    public static void toggleActivePieces() {
+        activePieces = (activePieces == PieceKind.LIGHT) ? PieceKind.DARK : PieceKind.LIGHT;
+    }
+
+    public static void setActivePieces(PieceKind pieceKind){
+        activePieces = pieceKind;
+    }
 }

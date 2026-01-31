@@ -1,4 +1,4 @@
-package app;
+package app.tiles;
 
 import app.utils.AppImages;
 import app.utils.AppParameters;

@@ -53,20 +53,19 @@ public class AppEvents {
             Position boardPosition = getBoardPosition(mouseEvent, AppState.isBoardRotated());
 
             if (mouseEvent.getButton() == MouseButton.PRIMARY){
-                if (AppState.board.getSelectedTile() == null){
-                    AppState.board.selectTile(boardPosition);
-                }
-                if (AppState.board.getSelectedPiece() == null){
-                    AppState.board.pieceDragging = false;
-                    AppState.deleteMousePosition();
-                    return;
-                }
                 if (!AppState.board.pieceDragging){
                     AppState.board.selectTile(boardPosition);
+                    AppState.board.pieceDragging = true;
                 }
-
-                AppState.setMousePosition(getMouseCoordinates(mouseEvent, AppState.isBoardRotated()));
-                AppState.board.pieceDragging = true;
+                if (AppState.board.getSelectedPiece() == null){
+                    return;
+                }
+                if (AppState.board.getSelectedPiece().pieceKind != AppState.getActivePieces()){
+                    return;
+                }
+                if (AppState.board.pieceDragging){
+                    AppState.setMousePosition(getMouseCoordinates(mouseEvent, AppState.isBoardRotated()));
+                }
             }
         });
         canvas.setOnMouseReleased(mouseEvent -> {
@@ -79,6 +78,7 @@ public class AppEvents {
                 AppState.board.selectTile(boardPosition);
                 AppState.board.pieceDragging = false;
                 AppState.deleteMousePosition();
+                AppState.board.selectTile(boardPosition);
             }
         });
     }

@@ -7,6 +7,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class MainScene {
@@ -22,7 +23,10 @@ public class MainScene {
 
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 
-        VBox vBox = new VBox(canvas);
+        Label whitePiecesScore = new Label("Score (White pieces): 0");
+        Label blackPiecesScore = new Label("Score (Black pieces): 0");
+
+        VBox vBox = new VBox(canvas, whitePiecesScore, blackPiecesScore);
 
         AnimationTimer timer = new AnimationTimer() {
             private long lastUpdate = 0;
@@ -42,6 +46,8 @@ public class MainScene {
                     graphicsContext.translate(-canvasWidth / 2, -canvasHeight / 2);
 
                     AppState.board.drawBoard(graphicsContext);
+                    whitePiecesScore.setText("Score (White pieces): " + AppState.whiteScore);
+                    blackPiecesScore.setText("Score (Black pieces): " + AppState.blackScore);
                     graphicsContext.restore();
                     lastUpdate = now;
                 }

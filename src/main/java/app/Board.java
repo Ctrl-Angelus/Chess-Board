@@ -3,88 +3,97 @@ package app;
 import app.pieces.ChessPieces;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
-import app.tiles.Tile;
-import app.tiles.TileType;
-import app.utils.AppState;
-import app.utils.Position;
-import app.utils.Vector2;
-import app.utils.AppParameters;
+import app.tiles.*;
+import app.utils.*;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseButton;
 
-public class Board {
+public class Board extends Canvas {
 
-    private Tile[][] tilesMatrix;
-    private Piece[][] piecesMatrix;
+    private final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
+    private final Piece[][] piecesMatrix;
     public boolean pieceDragging = false;
 
     private Position selectedTile = null;
+    private final GraphicsContext graphicsContext;
 
-    public Board(){
-        this.createBoard();
-        this.placePieces(AppParameters.INITIAL_POSITION);
-    }
-
-    public Tile[][] getTilesMatrix() {
-        return tilesMatrix;
+    public Board(Piece[][] piecesMatrix, double size){
+        super(size, size);
+        graphicsContext = getGraphicsContext2D();
+        setEvents();
+        createBoard();
+        this.piecesMatrix = piecesMatrix;
     }
 
     private void createBoard(){
-        tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
         double coordinateX;
         double coordinateY = 0;
-        boolean isColored = false;
+        boolean isTypeDark = false;
 
         for (int row = 0; row < AppParameters.BOARD_SIZE; row++) {
             coordinateX = 0;
             for (int column = 0; column < AppParameters.BOARD_SIZE; column++){
                 Tile tile = new Tile(
                     new Vector2(coordinateX, coordinateY),
-                    isColored ? TileType.DARK : TileType.LIGHT,
+                    isTypeDark ? TileType.DARK : TileType.LIGHT,
                     new Position(row, column)
                 );
 
                 tilesMatrix[row][column] = tile;
 
                 coordinateX += AppParameters.TILE_SIZE;
-                isColored = !isColored;
+                isTypeDark = !isTypeDark;
             }
-            isColored = tilesMatrix[row][0].type == TileType.LIGHT;
+            // Checks the first tile in the row above is of type LIGHT, to set the current type to the opposite
+            isTypeDark = tilesMatrix[row][0].type == TileType.LIGHT;
             coordinateY += AppParameters.TILE_SIZE;
         }
     }
 
-    private void placePieces(String pieceConfiguration){
-        piecesMatrix = new Piece[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
-        char[] initialPosition = pieceConfiguration.toCharArray();
-        int row = 0;
-        int column = 0;
-        for (char character : initialPosition){
-            if (character == ' '){
-                break;
-            }
-            if (Character.isDigit(character)){
-                column += Character.getNumericValue(character);
-                continue;
-            }
-            if (character == '/'){
-                row += 1;
-                column = 0;
-                continue;
-            }
-            if (isNotInsideBoard(new Position(row, column))){
-                break;
-            }
-            PieceKind kind = Character.isUpperCase(character) ? PieceKind.LIGHT : PieceKind.DARK;
-            for (ChessPieces piece : ChessPieces.values()){
-                if (Character.toLowerCase(character) != piece.notation){
-                    continue;
+    private void setEvents(){
+        setOnMouseClicked(mouseEvent -> {
+            Position boardPosition = GameUtils.getBoardPosition(mouseEvent, AppState.isBoardRotated());
+
+            switch (mouseEvent.getButton()){
+                case MouseButton.MIDDLE -> AppState.toggleBoardRotation();
+                case MouseButton.SECONDARY -> toggleTileHighlight(boardPosition);
+                case MouseButton.PRIMARY -> {
+                    if (!pieceDragging){
+                        selectTile(boardPosition);
+                    }
                 }
-                piecesMatrix[row][column] = piece.createInstance(Piece.getPiecePosition(tilesMatrix[row][column].coordinates), kind);
-                break;
             }
-            column += 1;
-        }
+        });
+        setOnMouseDragged(mouseEvent -> {
+            Position boardPosition = GameUtils.getBoardPosition(mouseEvent, AppState.isBoardRotated());
+
+            if (mouseEvent.getButton() == MouseButton.PRIMARY){
+                if (!pieceDragging){
+                    selectTile(boardPosition);
+                    pieceDragging = true;
+                }
+                if (getSelectedPiece() == null){
+                    return;
+                }
+                if (getSelectedPiece().pieceKind != AppState.getActivePieces()){
+                    return;
+                }
+                AppState.setMousePosition(GameUtils.getMouseCoordinates(mouseEvent, AppState.isBoardRotated()));
+            }
+        });
+        setOnMouseReleased(mouseEvent -> {
+
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                if (!pieceDragging){
+                    return;
+                }
+                pieceDragging = false;
+                AppState.deleteMousePosition();
+            }
+        });
     }
+
     public Tile getIndividualTile(Position position){
         if (position == null){return null;}
         return this.tilesMatrix[position.row()][position.column()];
@@ -94,7 +103,19 @@ public class Board {
         return piecesMatrix[position.row()][position.column()];
     }
 
-    public void drawBoard(GraphicsContext gc){
+    public void drawBoard(){
+        graphicsContext.save();
+
+        double width = this.getWidth();
+        double height = this.getHeight();
+
+        graphicsContext.translate(width / 2, height / 2);
+
+        graphicsContext.rotate(AppState.isBoardRotated() ? 180 : 0);
+
+        graphicsContext.translate(-width / 2, -height / 2);
+
+
         for (Tile[] tileRow : tilesMatrix){
             for (Tile tile : tileRow){
                 TileType type = tile.type;
@@ -103,7 +124,7 @@ public class Board {
                         type = TileType.SELECTION;
                     }
                 }
-                tile.draw(gc, type);
+                tile.draw(graphicsContext, type);
             }
         }
         Piece draggedPiece = null;
@@ -118,16 +139,18 @@ public class Board {
                         continue;
                     }
                 }
-                piece.draw(gc, null);
+                piece.draw(graphicsContext, null);
             }
         }
         if (draggedPiece != null){
-            draggedPiece.draw(gc, AppState.getMousePosition());
+            draggedPiece.draw(graphicsContext, AppState.getMousePosition());
         }
+
+        graphicsContext.restore();
     }
 
     public void toggleTileHighlight(Position position){
-        if (isNotInsideBoard(position)){
+        if (GameUtils.isNotInsideBoard(position)){
             return;
         }
         getIndividualTile(position).toggleHighlight();
@@ -141,7 +164,7 @@ public class Board {
         return piecesMatrix[selectedTile.row()][selectedTile.column()];
     }
     public void setSelectedTile(Position givenPosition){
-        if (isNotInsideBoard(givenPosition)){
+        if (GameUtils.isNotInsideBoard(givenPosition)){
             return;
         }
         if (selectedTile != null){
@@ -154,7 +177,7 @@ public class Board {
     }
 
     public void selectTile(Position givenPosition){
-        if (isNotInsideBoard(givenPosition)){
+        if (GameUtils.isNotInsideBoard(givenPosition)){
             return;
         }
         if (givenPosition.equals(getSelectedTile())){
@@ -195,7 +218,6 @@ public class Board {
         }
 
         AppState.toggleActivePieces();
-        System.out.println(AppState.getActivePieces());
 
         for (ChessPieces chessPiece : ChessPieces.values()){
             if (piece.pieceType != chessPiece){
@@ -210,12 +232,5 @@ public class Board {
             break;
         }
         selectedTile = null;
-    }
-
-    private boolean isNotInsideBoard(Position position){
-        return position.column() >= AppParameters.BOARD_SIZE
-                || position.column() < 0
-                || position.row() >= AppParameters.BOARD_SIZE
-                || position.row() < 0;
     }
 }

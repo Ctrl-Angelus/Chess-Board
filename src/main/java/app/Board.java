@@ -5,14 +5,15 @@ import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.tiles.*;
 import app.utils.*;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 
 public class Board extends Canvas {
 
-    private final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
-    private final Piece[][] piecesMatrix;
+    public final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
+    public final Piece[][] piecesMatrix;
     public boolean pieceDragging = false;
 
     private Position selectedTile = null;
@@ -62,6 +63,7 @@ public class Board extends Canvas {
                     if (!pieceDragging){
                         selectTile(boardPosition);
                     }
+                    removeHighlights();
                 }
             }
         });
@@ -72,11 +74,14 @@ public class Board extends Canvas {
                 if (!pieceDragging){
                     selectTile(boardPosition);
                     pieceDragging = true;
+                    setCursor(Cursor.CLOSED_HAND);
                 }
                 if (getSelectedPiece() == null){
+                    setCursor(Cursor.DEFAULT);
                     return;
                 }
                 if (getSelectedPiece().pieceKind != AppState.getActivePieces()){
+                    setCursor(Cursor.DEFAULT);
                     return;
                 }
                 AppState.setMousePosition(GameUtils.getMouseCoordinates(mouseEvent, AppState.isBoardRotated()));
@@ -89,9 +94,18 @@ public class Board extends Canvas {
                     return;
                 }
                 pieceDragging = false;
+                setCursor(Cursor.DEFAULT);
                 AppState.deleteMousePosition();
             }
         });
+    }
+
+    private void removeHighlights(){
+        for (Tile[] tileRow : tilesMatrix){
+            for (Tile tile : tileRow){
+                tile.deactivateHighlight();
+            }
+        }
     }
 
     public Tile getIndividualTile(Position position){
@@ -175,6 +189,12 @@ public class Board extends Canvas {
         }
         this.selectedTile = givenPosition;
     }
+    public void removePiece(Position position){
+        piecesMatrix[position.row()][position.column()] = null;
+    }
+    public void setPiece(Position position, Piece piece){
+        piecesMatrix[position.row()][position.column()] = piece;
+    }
 
     public void selectTile(Position givenPosition){
         if (GameUtils.isNotInsideBoard(givenPosition)){
@@ -195,11 +215,9 @@ public class Board extends Canvas {
             setSelectedTile(givenPosition);
             return;
         }
+        boolean enPassantAvailable = AppState.enPassantAvailable();
 
-        if (!piece.canMove(
-            selectedTile,
-            givenPosition
-        )){
+        if (!piece.canMove(selectedTile,givenPosition,this)){
             setSelectedTile(givenPosition);
             return;
         }
@@ -217,6 +235,10 @@ public class Board extends Canvas {
             }
         }
 
+        if (enPassantAvailable && AppState.enPassantAvailable()){
+            AppState.cancelEnPassant();
+        }
+
         AppState.toggleActivePieces();
 
         for (ChessPieces chessPiece : ChessPieces.values()){
@@ -227,8 +249,11 @@ public class Board extends Canvas {
                 Piece.getPiecePosition(tilesMatrix[givenPosition.row()][givenPosition.column()].coordinates),
                 piece.pieceKind
             );
-            piecesMatrix[givenPosition.row()][givenPosition.column()] = newPiece;
-            piecesMatrix[selectedTile.row()][selectedTile.column()] = null;
+            String pieceNotation = (newPiece.pieceType != ChessPieces.PAWN) ? String.valueOf(newPiece.pieceType.notation) : "";
+            System.out.println("Notation: " + pieceNotation + givenPosition.getPositionNotation());
+
+            setPiece(givenPosition, newPiece);
+            removePiece(selectedTile);
             break;
         }
         selectedTile = null;

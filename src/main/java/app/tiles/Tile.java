@@ -19,6 +19,9 @@ public class Tile {
     public void toggleHighlight(){
         this.isHighlighted = !this.isHighlighted;
     }
+    public void deactivateHighlight(){
+        this.isHighlighted = false;
+    }
 
     public void draw(GraphicsContext gc, TileType type){
 

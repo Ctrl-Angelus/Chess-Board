@@ -35,4 +35,19 @@ public class AppState {
     public static void setActivePieces(PieceKind pieceKind){
         activePieces = pieceKind;
     }
+
+    private static String enPassantPosition = "-";
+
+    public static String getEnPassantPosition() {
+        return enPassantPosition;
+    }
+    public static void setEnPassantPosition(Position position){
+        enPassantPosition = position.getPositionNotation();
+    }
+    public static void cancelEnPassant(){
+        enPassantPosition = "-";
+    }
+    public static boolean enPassantAvailable(){
+        return !getEnPassantPosition().equals("-");
+    }
 }

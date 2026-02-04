@@ -34,6 +34,7 @@ public class GameUtils {
             }
             if (Character.isDigit(character)){
                 column += Character.getNumericValue(character);
+                coordinateX += AppParameters.TILE_SIZE * Character.getNumericValue(character);
                 continue;
             }
             if (character == '/'){

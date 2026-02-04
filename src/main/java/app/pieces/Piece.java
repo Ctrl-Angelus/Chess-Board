@@ -1,5 +1,6 @@
 package app.pieces;
 
+import app.Board;
 import app.utils.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -51,5 +52,5 @@ public abstract class Piece {
         );
     }
 
-    public abstract boolean canMove(Position actualPosition, Position newPosition);
+    public abstract boolean canMove(Position actualPosition, Position newPosition, Board board);
 }

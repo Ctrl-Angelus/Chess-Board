@@ -1,5 +1,6 @@
 package app.pieces;
 
+import app.pieces.variations.*;
 import app.utils.Vector2;
 
 import java.util.function.BiFunction;

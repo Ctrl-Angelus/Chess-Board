@@ -25,12 +25,30 @@ public class Tile {
 
     public void draw(GraphicsContext gc, TileType type){
 
-        gc.setImageSmoothing(false);
-        gc.drawImage(
-            type.getImage(),
-            coordinates.coordinateX(),
-            coordinates.coordinateY()
-        );
+        switch (type){
+            case SELECTION -> gc.drawImage(
+                type.getImage(),
+                coordinates.coordinateX(),
+                coordinates.coordinateY()
+            );
+            case CAPTURE, MOVEMENT -> {
+                gc.drawImage(
+                    this.type.getImage(),
+                    coordinates.coordinateX(),
+                    coordinates.coordinateY()
+                );
+                gc.drawImage(
+                    type.getImage(),
+                    coordinates.coordinateX(),
+                    coordinates.coordinateY()
+                );
+            }
+            default -> gc.drawImage(
+                    this.type.getImage(),
+                    coordinates.coordinateX(),
+                    coordinates.coordinateY()
+            );
+        }
         if (isHighlighted && type != TileType.SELECTION){
             gc.drawImage(
                 TileType.HIGHLIGHT.getImage(),

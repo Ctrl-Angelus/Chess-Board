@@ -5,7 +5,6 @@ import app.pieces.ChessPieces;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.AppState;
-import app.utils.GameUtils;
 import app.utils.Position;
 import app.utils.Vector2;
 
@@ -25,15 +24,11 @@ public class Pawn extends Piece {
             case DARK -> 1;
             case LIGHT -> 6;
         };
-        Position rightColumnPosition = new Position(newPosition.row(), newPosition.column() - sign);
-        Position leftColumnPosition = new Position(newPosition.row(), newPosition.column() + sign);
+        Piece targetPiece = board.getIndividualPiece(newPosition);
+        if (targetPiece != null && targetPiece.pieceKind == pieceKind){
+            return false;
+        }
         Position enPassantPosition = Position.getPositionFromNotation(AppState.getEnPassantPosition());
-
-        boolean rightColumnAvailable = !GameUtils.isNotInsideBoard(rightColumnPosition);
-        boolean leftColumnAvailable = !GameUtils.isNotInsideBoard(leftColumnPosition);
-
-        boolean rightColumnEmpty = rightColumnAvailable && board.getIndividualPiece(rightColumnPosition) == null;
-        boolean leftColumnEmpty = leftColumnAvailable && board.getIndividualPiece(leftColumnPosition) == null;
 
         boolean forwardMovement = newPosition.row() == actualPosition.row() + sign;
         boolean sameColumn = newPosition.column() == actualPosition.column();
@@ -42,12 +37,12 @@ public class Pawn extends Piece {
         boolean leftColumn = newPosition.column() == actualPosition.column() + sign;
         boolean newPositionEmpty = board.getIndividualPiece(newPosition) == null;
         boolean isInInitialRow = actualPosition.row() == initialRow;
-        boolean doubleForwardMovement = newPosition.row() == initialRow + sign * 2;
+        boolean doubleForwardMovement = newPosition.row() == initialRow + sign * 2 && sameColumn;
 
         if (sameColumn && lowerRow){
             return false;
         }
-        else if ((rightColumn ||leftColumn) && forwardMovement){
+        else if ((rightColumn || leftColumn) && forwardMovement){
 
             if (enPassantPosition == null) {
                 if (newPositionEmpty) {
@@ -72,9 +67,7 @@ public class Pawn extends Piece {
             return true;
         }
         else if (isInInitialRow && doubleForwardMovement){
-            if (!leftColumnEmpty || !rightColumnEmpty){
-                AppState.setEnPassantPosition(new Position(initialRow + sign, newPosition.column()));
-            }
+            AppState.setEnPassantPosition(new Position(initialRow + sign, newPosition.column()));
             return true;
         }
         return false;

@@ -16,6 +16,11 @@ public class Queen extends Piece {
 
     @Override
     public boolean canMove(Position actualPosition, Position newPosition, Board board) {
+        Piece targetPiece = board.getIndividualPiece(newPosition);
+        if (targetPiece != null && targetPiece.pieceKind == pieceKind){
+            return false;
+        }
+
         int rowSign = (newPosition.row() - actualPosition.row() > 0) ? 1 : -1;
         int columnSign = (newPosition.column() - actualPosition.column() > 0) ? 1 : -1;
         int columnDifference = Math.abs(newPosition.column() - actualPosition.column());

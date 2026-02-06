@@ -15,7 +15,7 @@ public abstract class Piece {
         this.pieceType = pieceType;
         this.coordinates = coordinates;
         this.pieceKind = pieceKind;
-        this.image = AppImages.getImage(
+        this.image = AppAssets.getImage(
             pieceType.getImagePath(pieceKind),
             AppParameters.PIECE_SIZE,
             AppParameters.PIECE_SIZE,
@@ -52,5 +52,6 @@ public abstract class Piece {
         );
     }
 
+    //TODO: REFACTOR THE DUPLICATED LOGIC
     public abstract boolean canMove(Position actualPosition, Position newPosition, Board board);
 }

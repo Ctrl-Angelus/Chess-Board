@@ -17,6 +17,11 @@ public class Rook extends Piece {
     @Override
     public boolean canMove(Position actualPosition, Position newPosition, Board board) {
 
+        Piece targetPiece = board.getIndividualPiece(newPosition);
+        if (targetPiece != null && targetPiece.pieceKind == pieceKind){
+            return false;
+        }
+
         boolean sameColumn = actualPosition.column() == newPosition.column();
         boolean sameRow = actualPosition.row() == newPosition.row();
 

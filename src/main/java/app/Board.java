@@ -10,6 +10,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 
+import java.util.Arrays;
+
 public class Board extends Canvas {
 
     public final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
@@ -72,7 +74,12 @@ public class Board extends Canvas {
 
             if (mouseEvent.getButton() == MouseButton.PRIMARY){
                 if (!pieceDragging){
-                    selectTile(boardPosition);
+                    if (getSelectedTile() == null){
+                        selectTile(boardPosition);
+                    }
+                    if (!getSelectedTile().equals(boardPosition)){
+                        selectTile(boardPosition);
+                    }
                     pieceDragging = true;
                     setCursor(Cursor.CLOSED_HAND);
                 }
@@ -134,13 +141,58 @@ public class Board extends Canvas {
             for (Tile tile : tileRow){
                 TileType type = tile.type;
                 if (selectedTile != null){
+                    int row = Arrays.asList(tilesMatrix).indexOf(tileRow);
+                    int column = Arrays.asList(tileRow).indexOf(tile);
                     if (tile.equals(getIndividualTile(selectedTile))){
                         type = TileType.SELECTION;
+                    }
+                    else if (getSelectedPiece() != null) {
+                        if (getSelectedPiece().canMove(getSelectedTile(), new Position(row, column), this)){
+                            type = (getIndividualPiece(new Position(row, column)) == null) ?  TileType.MOVEMENT : TileType.CAPTURE;
+                        }
                     }
                 }
                 tile.draw(graphicsContext, type);
             }
         }
+
+        // Draw the board notation
+        char[] letters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
+        //TODO: REFACTOR THE DUPLICATED LOGIC INSIDE THE FOR-LOOPS
+        if (AppState.isBoardRotated()){
+            for (int i = AppParameters.BOARD_SIZE - 1; i >= 0; i--) {
+                Tile currentTile = getIndividualTile(new Position(0, i));
+                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.TILE_SIZE - AppParameters.FONT_SIZE / 2;
+                double coordinateY = currentTile.coordinates.coordinateY() + AppParameters.FONT_SIZE / 2;
+
+                new Tag(String.valueOf(letters[i]).toUpperCase(), NotationTags.LETTER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
+            }
+            for (int i = 0; i < AppParameters.BOARD_SIZE; i++) {
+                Tile currentTile = getIndividualTile(new Position(i, AppParameters.BOARD_SIZE - 1));
+                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.TILE_SIZE - AppParameters.FONT_SIZE / 2;
+                double coordinateY = currentTile.coordinates.coordinateY() - AppParameters.FONT_SIZE / 2 + AppParameters.TILE_SIZE;
+
+                new Tag(String.valueOf(AppParameters.BOARD_SIZE - i).toUpperCase(), NotationTags.NUMBER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
+            }
+        } else {
+            for (int i = 0; i < AppParameters.BOARD_SIZE; i++) {
+                Tile currentTile = getIndividualTile(new Position(AppParameters.BOARD_SIZE - 1, i));
+                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.FONT_SIZE / 2;
+                double coordinateY = currentTile.coordinates.coordinateY() + AppParameters.TILE_SIZE - AppParameters.FONT_SIZE / 2;
+
+                new Tag(String.valueOf(letters[i]).toUpperCase(), NotationTags.LETTER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
+            }
+            for (int i = AppParameters.BOARD_SIZE - 1; i >= 0; i--) {
+                Tile currentTile = getIndividualTile(new Position(i, 0));
+                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.FONT_SIZE / 2;
+                double coordinateY = currentTile.coordinates.coordinateY() + AppParameters.FONT_SIZE / 2;
+
+                new Tag(String.valueOf(AppParameters.BOARD_SIZE - i).toUpperCase(), NotationTags.NUMBER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
+            }
+        }
+
+
         Piece draggedPiece = null;
         for (Piece[] pieceRow : piecesMatrix){
             for (Piece piece : pieceRow){
@@ -159,7 +211,6 @@ public class Board extends Canvas {
         if (draggedPiece != null){
             draggedPiece.draw(graphicsContext, AppState.getMousePosition());
         }
-
         graphicsContext.restore();
     }
 

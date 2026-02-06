@@ -15,6 +15,11 @@ public class King extends Piece {
 
     @Override
     public boolean canMove(Position actualPosition, Position newPosition, Board board) {
+        Piece targetPiece = board.getIndividualPiece(newPosition);
+        if (targetPiece != null && targetPiece.pieceKind == pieceKind){
+            return false;
+        }
+
         int columnDifference = Math.abs(newPosition.column() - actualPosition.column());
         int rowDifference = Math.abs(newPosition.row() - actualPosition.row());
 

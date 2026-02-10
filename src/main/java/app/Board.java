@@ -17,9 +17,10 @@ public class Board extends Canvas {
 
     public final Tile[][] tilesMatrix = new Tile[AppParameters.BOARD_SIZE][AppParameters.BOARD_SIZE];
     public final Piece[][] piecesMatrix;
-    public boolean pieceDragging = false;
+    private final char[] notationLetters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
     private Position selectedTile = null;
+    public boolean pieceDragging = false;
     private final GraphicsContext graphicsContext;
 
     public Board(Piece[][] piecesMatrix, double size){
@@ -161,39 +162,40 @@ public class Board extends Canvas {
         }
 
         // Draw the board notation
-        char[] letters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
-        //TODO: REFACTOR THE DUPLICATED LOGIC INSIDE THE FOR-LOOPS
-        if (AppState.isBoardRotated()){
-            for (int i = AppParameters.BOARD_SIZE - 1; i >= 0; i--) {
-                Tile currentTile = getIndividualTile(new Position(0, i));
-                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.TILE_SIZE - AppParameters.FONT_SIZE / 2;
-                double coordinateY = currentTile.coordinates.coordinateY() + AppParameters.FONT_SIZE / 2;
+        boolean boardRotated = AppState.isBoardRotated();
+        int boardSize = AppParameters.BOARD_SIZE;
+        double tagSize = AppParameters.FONT_SIZE;
+        double tileSize = AppParameters.TILE_SIZE;
 
-                new Tag(String.valueOf(letters[i]).toUpperCase(), NotationTags.LETTER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
-            }
-            for (int i = 0; i < AppParameters.BOARD_SIZE; i++) {
-                Tile currentTile = getIndividualTile(new Position(i, AppParameters.BOARD_SIZE - 1));
-                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.TILE_SIZE - AppParameters.FONT_SIZE / 2;
-                double coordinateY = currentTile.coordinates.coordinateY() - AppParameters.FONT_SIZE / 2 + AppParameters.TILE_SIZE;
+        int startColumn = boardRotated ? boardSize - 1 : 0;
+        int startRow = boardRotated ? 0: boardSize - 1;
 
-                new Tag(String.valueOf(AppParameters.BOARD_SIZE - i).toUpperCase(), NotationTags.NUMBER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
-            }
-        } else {
-            for (int i = 0; i < AppParameters.BOARD_SIZE; i++) {
-                Tile currentTile = getIndividualTile(new Position(AppParameters.BOARD_SIZE - 1, i));
-                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.FONT_SIZE / 2;
-                double coordinateY = currentTile.coordinates.coordinateY() + AppParameters.TILE_SIZE - AppParameters.FONT_SIZE / 2;
+        double offsetX = boardRotated ? tileSize - tagSize / 2 : tagSize / 2;
 
-                new Tag(String.valueOf(letters[i]).toUpperCase(), NotationTags.LETTER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
-            }
-            for (int i = AppParameters.BOARD_SIZE - 1; i >= 0; i--) {
-                Tile currentTile = getIndividualTile(new Position(i, 0));
-                double coordinateX = currentTile.coordinates.coordinateX() + AppParameters.FONT_SIZE / 2;
-                double coordinateY = currentTile.coordinates.coordinateY() + AppParameters.FONT_SIZE / 2;
+        double letterOffsetY = boardRotated ? tagSize / 2 : tileSize - tagSize / 2;
+        double numberOffsetY = offsetX;
 
-                new Tag(String.valueOf(AppParameters.BOARD_SIZE - i).toUpperCase(), NotationTags.NUMBER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
-            }
+        double letterTagLimit = boardRotated ? -1 : boardSize;
+        double numberTagLimit = boardRotated ? boardSize : -1;
+
+        int letterIncrement = boardRotated ? -1 : 1;
+        int numberIncrement = boardRotated ? 1 : -1;
+
+        for (int column = startColumn; column != letterTagLimit; column += letterIncrement) {
+            Tile currentTile = getIndividualTile(new Position(startRow, column));
+            double coordinateX = currentTile.coordinates.coordinateX() + offsetX;
+            double coordinateY = currentTile.coordinates.coordinateY() + letterOffsetY;
+
+            new Tag(String.valueOf(notationLetters[column]).toUpperCase(), NotationTags.LETTER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
+        }
+
+        for (int row = startRow; row != numberTagLimit; row += numberIncrement) {
+            Tile currentTile = getIndividualTile(new Position(row, startColumn));
+            double coordinateX = currentTile.coordinates.coordinateX() + offsetX;
+            double coordinateY = currentTile.coordinates.coordinateY() + numberOffsetY;
+
+            new Tag(String.valueOf(AppParameters.BOARD_SIZE - row).toUpperCase(), NotationTags.NUMBER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
         }
 
 
@@ -298,10 +300,12 @@ public class Board extends Canvas {
     public Position getSelectedTile(){
         return selectedTile;
     }
+
     public Piece getSelectedPiece(){
         if (selectedTile == null){return null; }
         return piecesMatrix[selectedTile.row()][selectedTile.column()];
     }
+
     public void setSelectedTile(Position givenPosition){
         if (GameUtils.isNotInsideBoard(givenPosition)){
             return;
@@ -314,9 +318,11 @@ public class Board extends Canvas {
         }
         this.selectedTile = givenPosition;
     }
+
     public void removePiece(Position position){
         piecesMatrix[position.row()][position.column()] = null;
     }
+
     public void setPiece(Position position, Piece piece){
         piecesMatrix[position.row()][position.column()] = piece;
     }

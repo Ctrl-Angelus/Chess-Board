@@ -2,6 +2,7 @@ package app.pieces.variations;
 
 import app.Board;
 import app.pieces.ChessPieces;
+import app.pieces.MovementType;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.AppState;
@@ -15,7 +16,7 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public boolean canMove(Position actualPosition, Position newPosition, Board board) {
+    public MovementType checkMove(Position actualPosition, Position newPosition, Board board) {
         int sign = switch (pieceKind){
             case DARK -> 1;
             case LIGHT -> -1;
@@ -26,9 +27,9 @@ public class Pawn extends Piece {
         };
         Piece targetPiece = board.getIndividualPiece(newPosition);
         if (targetPiece != null && targetPiece.pieceKind == pieceKind){
-            return false;
+            return MovementType.ILLEGAL_MOVE;
         }
-        Position enPassantPosition = Position.getPositionFromNotation(AppState.getEnPassantPosition());
+        Position enPassantPosition = AppState.getEnPassantPosition();
 
         boolean forwardMovement = newPosition.row() == actualPosition.row() + sign;
         boolean sameColumn = newPosition.column() == actualPosition.column();
@@ -40,36 +41,30 @@ public class Pawn extends Piece {
         boolean doubleForwardMovement = newPosition.row() == initialRow + sign * 2 && sameColumn;
 
         if (sameColumn && lowerRow){
-            return false;
+            return MovementType.ILLEGAL_MOVE;
         }
         else if ((rightColumn || leftColumn) && forwardMovement){
 
             if (enPassantPosition == null) {
                 if (newPositionEmpty) {
-                    return false;
+                    return MovementType.ILLEGAL_MOVE;
                 }
             } else {
-                if (enPassantPosition.equals(newPosition)) {
-                    var pawnPosition = new Position(newPosition.row() - sign, newPosition.column());
+                boolean correctPosition = enPassantPosition.equals(newPosition);
+                boolean enPassantPiecePositionNotNull = board.getIndividualPiece(AppState.getEnPassantPiecePosition()) != null;
+                if (correctPosition && enPassantPiecePositionNotNull && board.getIndividualPiece(AppState.getEnPassantPiecePosition()).pieceKind != pieceKind) {
 
-                    if (pieceKind == PieceKind.LIGHT) {
-                        AppState.whiteScore += board.getIndividualPiece(pawnPosition).pieceType.numericalValue;
-                    } else {
-                        AppState.blackScore += board.getIndividualPiece(pawnPosition).pieceType.numericalValue;
-                    }
-                    board.removePiece(pawnPosition);
-                    return true;
+                    return MovementType.EN_PASSANT;
                 }
             }
-            return !newPositionEmpty;
+            return newPositionEmpty ? MovementType.ILLEGAL_MOVE : MovementType.LEGAL_MOVE;
         }
         else if (forwardMovement && newPositionEmpty && sameColumn){
-            return true;
+            return MovementType.LEGAL_MOVE;
         }
         else if (isInInitialRow && doubleForwardMovement){
-            AppState.setEnPassantPosition(new Position(initialRow + sign, newPosition.column()));
-            return true;
+            return MovementType.INITIAL_DOUBLE_PAWN_MOVE;
         }
-        return false;
+        return MovementType.ILLEGAL_MOVE;
     }
 }

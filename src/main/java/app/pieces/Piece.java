@@ -53,5 +53,5 @@ public abstract class Piece {
     }
 
     //TODO: REFACTOR THE DUPLICATED LOGIC
-    public abstract boolean canMove(Position actualPosition, Position newPosition, Board board);
+    public abstract MovementType checkMove(Position actualPosition, Position newPosition, Board board);
 }

@@ -2,6 +2,7 @@ package app.pieces.variations;
 
 import app.Board;
 import app.pieces.ChessPieces;
+import app.pieces.MovementType;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.Position;
@@ -13,10 +14,10 @@ public class Knight extends Piece {
     }
 
     @Override
-    public boolean canMove(Position actualPosition, Position newPosition, Board board) {
+    public MovementType checkMove(Position actualPosition, Position newPosition, Board board) {
         Piece targetPiece = board.getIndividualPiece(newPosition);
         if (targetPiece != null && targetPiece.pieceKind == pieceKind){
-            return false;
+            return MovementType.ILLEGAL_MOVE;
         }
 
         int columnDifference = Math.abs(newPosition.column() - actualPosition.column());
@@ -25,6 +26,6 @@ public class Knight extends Piece {
         int maxDifference = Math.max(columnDifference, rowDifference);
         int minDifference = Math.min(columnDifference, rowDifference);
 
-        return maxDifference == 2 && minDifference == 1;
+        return maxDifference == 2 && minDifference == 1 ? MovementType.LEGAL_MOVE : MovementType.ILLEGAL_MOVE;
     }
 }

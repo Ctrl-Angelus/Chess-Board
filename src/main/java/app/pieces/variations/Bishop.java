@@ -2,6 +2,7 @@ package app.pieces.variations;
 
 import app.Board;
 import app.pieces.ChessPieces;
+import app.pieces.MovementType;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.GameUtils;
@@ -15,10 +16,10 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public boolean canMove(Position actualPosition, Position newPosition, Board board) {
+    public MovementType checkMove(Position actualPosition, Position newPosition, Board board) {
         Piece targetPiece = board.getIndividualPiece(newPosition);
         if (targetPiece != null && targetPiece.pieceKind == pieceKind){
-            return false;
+            return MovementType.ILLEGAL_MOVE;
         }
 
         int rowSign = (newPosition.row() - actualPosition.row() > 0) ? 1 : -1;
@@ -34,17 +35,17 @@ public class Bishop extends Piece {
 
             while (!new Position(currentRow, currentColumn).equals(newPosition)){
                 if (GameUtils.isNotInsideBoard(new Position(currentRow, currentColumn))){
-                    return false;
+                    return MovementType.ILLEGAL_MOVE;
                 }
                 if (board.getIndividualPiece(new Position(currentRow, currentColumn)) != null){
-                    return false;
+                    return MovementType.ILLEGAL_MOVE;
                 }
                 currentRow += rowSign;
                 currentColumn += columnSign;
             }
-            return true;
+            return MovementType.LEGAL_MOVE;
         }
 
-        return false;
+        return MovementType.ILLEGAL_MOVE;
     }
 }

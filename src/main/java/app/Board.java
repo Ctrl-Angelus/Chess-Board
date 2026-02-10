@@ -1,6 +1,7 @@
 package app;
 
 import app.pieces.ChessPieces;
+import app.pieces.MovementType;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.tiles.*;
@@ -147,7 +148,10 @@ public class Board extends Canvas {
                         type = TileType.SELECTION;
                     }
                     else if (getSelectedPiece() != null) {
-                        if (getSelectedPiece().canMove(getSelectedTile(), new Position(row, column), this)){
+                        if (
+                            getSelectedPiece().pieceKind == AppState.getActivePieces()
+                            && checkPieceMovement(getSelectedPiece(), new Position(row, column), false)
+                        ){
                             type = (getIndividualPiece(new Position(row, column)) == null) ?  TileType.MOVEMENT : TileType.CAPTURE;
                         }
                     }
@@ -214,6 +218,76 @@ public class Board extends Canvas {
         graphicsContext.restore();
     }
 
+
+    public boolean checkPieceMovement(Piece piece, Position givenPosition, boolean performMovement){
+        MovementType movementType = piece.checkMove(selectedTile, givenPosition, this);
+
+        return switch (movementType){
+            case LEGAL_MOVE, CAPTURE -> {
+                if (performMovement){
+                    movePiece(piece, givenPosition);
+                }
+                yield true;
+            }
+            case EN_PASSANT -> {
+                if (performMovement){
+                    var pawnPosition = AppState.getEnPassantPiecePosition();
+
+                    if (piece.pieceKind == PieceKind.LIGHT) {
+                        AppState.whiteScore += getIndividualPiece(pawnPosition).pieceType.numericalValue;
+                    } else {
+                        AppState.blackScore += getIndividualPiece(pawnPosition).pieceType.numericalValue;
+                    }
+                    removePiece(pawnPosition);
+                    movePiece(piece, givenPosition);
+                }
+                yield true;
+            }
+            case INITIAL_DOUBLE_PAWN_MOVE -> {
+                if (performMovement){
+                    int initialRow = switch (piece.pieceKind){
+                        case DARK -> 1;
+                        case LIGHT -> 6;
+                    };
+                    int sign = switch (piece.pieceKind){
+                        case DARK -> 1;
+                        case LIGHT -> -1;
+                    };
+                    AppState.setEnPassantPosition(new Position(initialRow + sign, givenPosition.column()), givenPosition);
+                    movePiece(piece, givenPosition);
+                }
+                yield true;
+            }
+            default -> false;
+        };
+    }
+
+    public void movePiece(Piece piece, Position givenPosition){
+        for (ChessPieces chessPiece : ChessPieces.values()){
+            if (piece.pieceType != chessPiece){
+                continue;
+            }
+            if (getIndividualPiece(givenPosition) != null){
+
+                if (piece.pieceKind == PieceKind.LIGHT){
+                    AppState.whiteScore += getIndividualPiece(givenPosition).pieceType.numericalValue;
+                } else {
+                    AppState.blackScore += getIndividualPiece(givenPosition).pieceType.numericalValue;
+                }
+            }
+            Piece newPiece = chessPiece.createInstance(
+                    Piece.getPiecePosition(tilesMatrix[givenPosition.row()][givenPosition.column()].coordinates),
+                    piece.pieceKind
+            );
+            String pieceNotation = (newPiece.pieceType != ChessPieces.PAWN) ? String.valueOf(newPiece.pieceType.notation) : "";
+            System.out.println("Notation: " + pieceNotation + givenPosition.getPositionNotation());
+
+            setPiece(givenPosition, newPiece);
+            removePiece(selectedTile);
+            break;
+        }
+    }
+
     public void toggleTileHighlight(Position position){
         if (GameUtils.isNotInsideBoard(position)){
             return;
@@ -268,45 +342,16 @@ public class Board extends Canvas {
         }
         boolean enPassantAvailable = AppState.enPassantAvailable();
 
-        if (!piece.canMove(selectedTile,givenPosition,this)){
+        if (!checkPieceMovement(piece, givenPosition, true)){
             setSelectedTile(givenPosition);
             return;
         }
-
-        if (getIndividualPiece(givenPosition) != null){
-            if (piece.pieceKind == getIndividualPiece(givenPosition).pieceKind){
-                setSelectedTile(givenPosition);
-                return;
-            }
-
-            if (piece.pieceKind == PieceKind.LIGHT){
-                AppState.whiteScore += getIndividualPiece(givenPosition).pieceType.numericalValue;
-            } else {
-                AppState.blackScore += getIndividualPiece(givenPosition).pieceType.numericalValue;
-            }
-        }
-
         if (enPassantAvailable && AppState.enPassantAvailable()){
             AppState.cancelEnPassant();
         }
 
         AppState.toggleActivePieces();
 
-        for (ChessPieces chessPiece : ChessPieces.values()){
-            if (piece.pieceType != chessPiece){
-                continue;
-            }
-            Piece newPiece = chessPiece.createInstance(
-                Piece.getPiecePosition(tilesMatrix[givenPosition.row()][givenPosition.column()].coordinates),
-                piece.pieceKind
-            );
-            String pieceNotation = (newPiece.pieceType != ChessPieces.PAWN) ? String.valueOf(newPiece.pieceType.notation) : "";
-            System.out.println("Notation: " + pieceNotation + givenPosition.getPositionNotation());
-
-            setPiece(givenPosition, newPiece);
-            removePiece(selectedTile);
-            break;
-        }
         selectedTile = null;
     }
 }

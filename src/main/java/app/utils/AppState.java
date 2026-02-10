@@ -2,6 +2,9 @@ package app.utils;
 
 import app.pieces.PieceKind;
 
+import static app.pieces.PieceKind.DARK;
+import static app.pieces.PieceKind.LIGHT;
+
 public class AppState {
     private static boolean boardRotated = false;
     public static void toggleBoardRotation(){
@@ -25,29 +28,42 @@ public class AppState {
     public static int whiteScore = 0;
     public static int blackScore = 0;
 
-    private static PieceKind activePieces = PieceKind.LIGHT;
+    private static PieceKind activePieces = LIGHT;
     public static PieceKind getActivePieces() {
         return activePieces;
     }
     public static void toggleActivePieces() {
-        activePieces = (activePieces == PieceKind.LIGHT) ? PieceKind.DARK : PieceKind.LIGHT;
+        activePieces = (activePieces == LIGHT) ? DARK : LIGHT;
     }
     public static void setActivePieces(PieceKind pieceKind){
         activePieces = pieceKind;
     }
 
-    private static String enPassantPosition = "-";
+    private static String enPassantNotation = "-";
+    private static Position enPassantPosition = null;
+    private static Position enPassantPiecePosition = null;
 
-    public static String getEnPassantPosition() {
+    public static String getEnPassantNotation() {
+        return enPassantNotation;
+    }
+    public static Position getEnPassantPosition(){
         return enPassantPosition;
     }
-    public static void setEnPassantPosition(Position position){
-        enPassantPosition = position.getPositionNotation();
+    public static void setEnPassantPosition(Position enPassantPosition, Position piecePosition){
+
+        enPassantNotation = enPassantPosition.getPositionNotation();
+        AppState.enPassantPosition = enPassantPosition;
+        enPassantPiecePosition = piecePosition;
     }
     public static void cancelEnPassant(){
-        enPassantPosition = "-";
+        enPassantNotation = "-";
+        enPassantPosition = null;
     }
     public static boolean enPassantAvailable(){
-        return !getEnPassantPosition().equals("-");
+        return enPassantPosition != null;
+    }
+
+    public static Position getEnPassantPiecePosition() {
+        return enPassantPiecePosition;
     }
 }

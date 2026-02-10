@@ -2,6 +2,7 @@ package app.pieces.variations;
 
 import app.Board;
 import app.pieces.ChessPieces;
+import app.pieces.MovementType;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
 import app.utils.GameUtils;
@@ -15,11 +16,11 @@ public class Rook extends Piece {
     }
 
     @Override
-    public boolean canMove(Position actualPosition, Position newPosition, Board board) {
+    public MovementType checkMove(Position actualPosition, Position newPosition, Board board) {
 
         Piece targetPiece = board.getIndividualPiece(newPosition);
         if (targetPiece != null && targetPiece.pieceKind == pieceKind){
-            return false;
+            return MovementType.ILLEGAL_MOVE;
         }
 
         boolean sameColumn = actualPosition.column() == newPosition.column();
@@ -33,10 +34,10 @@ public class Rook extends Piece {
                 int currentRow = actualPosition.row() + sign;
                 while (!new Position(currentRow, actualPosition.column()).equals(newPosition)){
                     if (GameUtils.isNotInsideBoard(new Position(actualPosition.row(), actualPosition.column()))){
-                        return false;
+                        return MovementType.ILLEGAL_MOVE;
                     }
                     if (board.getIndividualPiece(new Position(currentRow, actualPosition.column())) != null){
-                        return false;
+                        return MovementType.ILLEGAL_MOVE;
                     }
                     currentRow += sign;
                 }
@@ -46,16 +47,16 @@ public class Rook extends Piece {
                 int currentColumn = actualPosition.column() + sign;
                 while (!new Position(actualPosition.row(), currentColumn).equals(newPosition)){
                     if (GameUtils.isNotInsideBoard(new Position(actualPosition.row(), currentColumn))){
-                        return false;
+                        return MovementType.ILLEGAL_MOVE;
                     }
                     if (board.getIndividualPiece(new Position(actualPosition.row(), currentColumn)) != null){
-                        return false;
+                        return MovementType.ILLEGAL_MOVE;
                     }
                     currentColumn += sign;
                 }
             }
-            return true;
+            return MovementType.LEGAL_MOVE;
         }
-        return false;
+        return MovementType.ILLEGAL_MOVE;
     }
 }

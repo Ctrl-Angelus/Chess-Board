@@ -26,8 +26,8 @@ public class Pawn extends Piece {
             case LIGHT -> 6;
         };
         int finalRow = switch (pieceKind){
-            case DARK -> 0;
-            case LIGHT -> 7;
+            case DARK -> 7;
+            case LIGHT -> 0;
         };
         Piece targetPiece = board.getIndividualPiece(newPosition);
         if (targetPiece != null && targetPiece.pieceKind == pieceKind){
@@ -52,8 +52,6 @@ public class Pawn extends Piece {
             if (enPassantPosition == null) {
                 if (newPositionEmpty) {
                     return MovementType.ILLEGAL_MOVE;
-                } else if (newPosition.row() == finalRow) {
-                    return MovementType.PROMOTION;
                 }
             } else {
                 boolean correctPosition = enPassantPosition.equals(newPosition);
@@ -62,6 +60,9 @@ public class Pawn extends Piece {
 
                     return MovementType.EN_PASSANT;
                 }
+            }
+            if (!newPositionEmpty && newPosition.row() == finalRow){
+                return MovementType.PROMOTION;
             }
             return newPositionEmpty ? MovementType.ILLEGAL_MOVE : MovementType.LEGAL_MOVE;
         }

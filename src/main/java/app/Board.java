@@ -9,9 +9,12 @@ import app.utils.*;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseButton;
 
+import javax.lang.model.util.SimpleElementVisitor6;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Board extends Canvas {
@@ -241,6 +244,30 @@ public class Board extends Canvas {
                     }
                     removePiece(pawnPosition);
                     movePiece(piece, givenPosition);
+                }
+                yield true;
+            }
+            case PROMOTION -> {
+                // TODO: FIX THE NO SUCH ELEMENT EXCEPTION WHEN CLOSING THE INPUT DIALOG (CANCEL THE MOVEMENT)
+                if (performMovement){
+                    TextInputDialog dialog = new TextInputDialog();
+                    Optional<String> selectedPiece;
+                    do {
+                        dialog.setTitle("Piece Promotion");
+                        dialog.setHeaderText("Enter a valid piece notation to promote the current pawn:");
+                        dialog.setContentText("Value:");
+
+                        selectedPiece = dialog.showAndWait();
+                    }
+                    while(!ChessPieces.validPiece(selectedPiece.get().charAt(0)));
+
+                    movePiece(piece, givenPosition);
+                    ChessPieces type = ChessPieces.getType(selectedPiece.get().charAt(0));
+                    if (type == null){
+                        yield false;
+                    }
+                    Piece newPiece = getIndividualPiece(givenPosition);
+                    setPiece(givenPosition, type.createInstance(newPiece.coordinates, newPiece.pieceKind, newPiece.position));
                 }
                 yield true;
             }

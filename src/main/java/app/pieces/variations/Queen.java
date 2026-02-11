@@ -11,8 +11,8 @@ import app.utils.Vector2;
 
 public class Queen extends Piece {
 
-    public Queen(Vector2 coordinates, PieceKind pieceShade){
-        super(ChessPieces.QUEEN, coordinates, pieceShade);
+    public Queen(Vector2 coordinates, PieceKind pieceShade, Position position){
+        super(ChessPieces.QUEEN, coordinates, pieceShade, position);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package app.pieces;
 
 import app.pieces.variations.*;
+import app.utils.Position;
+import app.utils.TriFunction;
 import app.utils.Vector2;
-
-import java.util.function.BiFunction;
 
 public enum ChessPieces {
     PAWN(1, 'p', Pawn::new),
@@ -16,12 +16,12 @@ public enum ChessPieces {
     public final int numericalValue;
     public final char notation;
     public final String imagePath;
-    public final BiFunction<Vector2, PieceKind, Piece> factory;
+    public final TriFunction<Vector2, PieceKind, Position, Piece> factory;
 
     ChessPieces(
         int numericalValue,
         char notation,
-        BiFunction<Vector2, PieceKind, Piece> factory
+        TriFunction<Vector2, PieceKind, Position, Piece> factory
     ){
         this.numericalValue = numericalValue;
         this.notation = notation;
@@ -29,8 +29,8 @@ public enum ChessPieces {
         this.factory = factory;
     }
 
-    public Piece createInstance(Vector2 coordinates, PieceKind pieceShade){
-        return this.factory.apply(coordinates, pieceShade);
+    public Piece createInstance(Vector2 coordinates, PieceKind pieceShade, Position position){
+        return this.factory.apply(coordinates, pieceShade, position);
     }
 
     public String getImagePath(PieceKind pieceKind){

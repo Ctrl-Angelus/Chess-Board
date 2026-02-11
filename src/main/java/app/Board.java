@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Board extends Canvas {
 
@@ -118,7 +119,9 @@ public class Board extends Canvas {
     }
 
     public Tile getIndividualTile(Position position){
-        if (position == null){return null;}
+        if (position == null){
+            return null;
+        }
         return this.tilesMatrix[position.row()][position.column()];
     }
 
@@ -138,22 +141,19 @@ public class Board extends Canvas {
 
         graphicsContext.translate(-width / 2, -height / 2);
 
-
         for (Tile[] tileRow : tilesMatrix){
             for (Tile tile : tileRow){
                 TileType type = tile.type;
                 if (selectedTile != null){
-                    int row = Arrays.asList(tilesMatrix).indexOf(tileRow);
-                    int column = Arrays.asList(tileRow).indexOf(tile);
                     if (tile.equals(getIndividualTile(selectedTile))){
                         type = TileType.SELECTION;
                     }
                     else if (getSelectedPiece() != null) {
                         if (
                             getSelectedPiece().pieceKind == AppState.getActivePieces()
-                            && checkPieceMovement(getSelectedPiece(), new Position(row, column), false)
+                            && checkPieceMovement(getSelectedPiece(), tile.position, false)
                         ){
-                            type = (getIndividualPiece(new Position(row, column)) == null) ?  TileType.MOVEMENT : TileType.CAPTURE;
+                            type = (getIndividualPiece(tile.position) == null) ?  TileType.MOVEMENT : TileType.CAPTURE;
                         }
                     }
                 }
@@ -206,7 +206,7 @@ public class Board extends Canvas {
                     continue;
                 }
                 if (selectedTile != null && pieceDragging){
-                    if (piece == piecesMatrix[selectedTile.row()][selectedTile.column()]){
+                    if (piece == getSelectedPiece()){
                         draggedPiece = piece;
                         continue;
                     }
@@ -219,7 +219,6 @@ public class Board extends Canvas {
         }
         graphicsContext.restore();
     }
-
 
     public boolean checkPieceMovement(Piece piece, Position givenPosition, boolean performMovement){
         MovementType movementType = piece.checkMove(selectedTile, givenPosition, this);
@@ -279,7 +278,8 @@ public class Board extends Canvas {
             }
             Piece newPiece = chessPiece.createInstance(
                     Piece.getPiecePosition(tilesMatrix[givenPosition.row()][givenPosition.column()].coordinates),
-                    piece.pieceKind
+                    piece.pieceKind,
+                    givenPosition
             );
             String pieceNotation = (newPiece.pieceType != ChessPieces.PAWN) ? String.valueOf(newPiece.pieceType.notation) : "";
             System.out.println("Notation: " + pieceNotation + givenPosition.getPositionNotation());

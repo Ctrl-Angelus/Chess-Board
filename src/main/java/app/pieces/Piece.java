@@ -9,12 +9,14 @@ public abstract class Piece {
     public final ChessPieces pieceType;
     public final PieceKind pieceKind;
     public final Vector2 coordinates;
+    public final Position position;
     public final Image image;
 
-    public Piece(ChessPieces pieceType, Vector2 coordinates, PieceKind pieceKind){
+    public Piece(ChessPieces pieceType, Vector2 coordinates, PieceKind pieceKind, Position position){
         this.pieceType = pieceType;
         this.coordinates = coordinates;
         this.pieceKind = pieceKind;
+        this.position = position;
         this.image = AppAssets.getImage(
             pieceType.getImagePath(pieceKind),
             AppParameters.PIECE_SIZE,

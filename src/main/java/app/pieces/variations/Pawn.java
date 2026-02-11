@@ -11,8 +11,8 @@ import app.utils.Vector2;
 
 public class Pawn extends Piece {
 
-    public Pawn(Vector2 coordinates, PieceKind pieceShade){
-        super(ChessPieces.PAWN, coordinates, pieceShade);
+    public Pawn(Vector2 coordinates, PieceKind pieceShade, Position position){
+        super(ChessPieces.PAWN, coordinates, pieceShade, position);
     }
 
     @Override
@@ -24,6 +24,10 @@ public class Pawn extends Piece {
         int initialRow = switch (pieceKind){
             case DARK -> 1;
             case LIGHT -> 6;
+        };
+        int finalRow = switch (pieceKind){
+            case DARK -> 0;
+            case LIGHT -> 7;
         };
         Piece targetPiece = board.getIndividualPiece(newPosition);
         if (targetPiece != null && targetPiece.pieceKind == pieceKind){
@@ -48,6 +52,8 @@ public class Pawn extends Piece {
             if (enPassantPosition == null) {
                 if (newPositionEmpty) {
                     return MovementType.ILLEGAL_MOVE;
+                } else if (newPosition.row() == finalRow) {
+                    return MovementType.PROMOTION;
                 }
             } else {
                 boolean correctPosition = enPassantPosition.equals(newPosition);
@@ -60,6 +66,9 @@ public class Pawn extends Piece {
             return newPositionEmpty ? MovementType.ILLEGAL_MOVE : MovementType.LEGAL_MOVE;
         }
         else if (forwardMovement && newPositionEmpty && sameColumn){
+            if (newPosition.row() == finalRow){
+                return MovementType.PROMOTION;
+            }
             return MovementType.LEGAL_MOVE;
         }
         else if (isInInitialRow && doubleForwardMovement){

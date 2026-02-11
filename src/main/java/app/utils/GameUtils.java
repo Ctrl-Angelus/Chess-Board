@@ -3,6 +3,7 @@ package app.utils;
 import app.pieces.ChessPieces;
 import app.pieces.Piece;
 import app.pieces.PieceKind;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 
 public class GameUtils {
@@ -54,7 +55,8 @@ public class GameUtils {
                 }
                 piecesMatrix[row][column] = piece.createInstance(
                         Piece.getPiecePosition(new Vector2(coordinateX, coordinateY)),
-                        kind
+                        kind,
+                        new Position(row, column)
                 );
                 break;
             }

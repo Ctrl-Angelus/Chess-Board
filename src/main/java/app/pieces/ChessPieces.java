@@ -33,15 +33,13 @@ public enum ChessPieces {
         return this.factory.apply(coordinates, pieceShade, position);
     }
 
-
-
     public String getImagePath(PieceKind pieceKind){
         return imagePath.replace("#shade#", pieceKind.getShade());
     }
 
     public static boolean validPiece(char piece){
         for (ChessPieces type : ChessPieces.values()){
-            if (piece == type.notation){
+            if (Character.toLowerCase(piece) == type.notation){
                 return true;
             }
         }
@@ -49,7 +47,7 @@ public enum ChessPieces {
     }
     public static ChessPieces getType(char piece){
         for (ChessPieces type : ChessPieces.values()){
-            if (piece == type.notation){
+            if (Character.toLowerCase(piece) == type.notation){
                 return type;
             }
         }

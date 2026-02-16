@@ -24,17 +24,32 @@ public class Board extends Canvas {
     public boolean pieceDragging = false;
     private final GraphicsContext graphicsContext;
 
-    public Board(Piece[][] piecesMatrix, double size){
-        super(size, size);
+    private final PlayerBanner whiteBanner;
+    private final PlayerBanner blackBanner;
+
+    public Board(Piece[][] piecesMatrix){
+        super(AppParameters.TILE_SIZE * AppParameters.BOARD_SIZE, AppParameters.TILE_SIZE * (AppParameters.BOARD_SIZE + 1));
         graphicsContext = getGraphicsContext2D();
         setEvents();
         createBoard();
         this.piecesMatrix = piecesMatrix;
+
+        this.whiteBanner = new PlayerBanner(
+            new Vector2(0, this.getHeight()- AppParameters.TILE_SIZE/2),
+            "/ui/White banner.png",
+            PieceKind.LIGHT
+        );
+
+        this.blackBanner = new PlayerBanner(
+            new Vector2(0, 0),
+            "/ui/Black banner.png",
+            PieceKind.DARK
+        );
     }
 
     private void createBoard(){
         double coordinateX;
-        double coordinateY = 0;
+        double coordinateY = AppParameters.TILE_SIZE/2;
         boolean isTypeDark = false;
 
         for (int row = 0; row < AppParameters.BOARD_SIZE; row++) {
@@ -61,6 +76,10 @@ public class Board extends Canvas {
         setOnMouseClicked(mouseEvent -> {
             Position boardPosition = GameUtils.getBoardPosition(mouseEvent, AppState.isBoardRotated());
 
+            if (GameUtils.isNotInsideBoard(boardPosition)){
+                return;
+            }
+
             switch (mouseEvent.getButton()){
                 case MouseButton.MIDDLE -> AppState.toggleBoardRotation();
                 case MouseButton.SECONDARY -> toggleTileHighlight(boardPosition);
@@ -74,6 +93,9 @@ public class Board extends Canvas {
         });
         setOnMouseDragged(mouseEvent -> {
             Position boardPosition = GameUtils.getBoardPosition(mouseEvent, AppState.isBoardRotated());
+            if (GameUtils.isNotInsideBoard(boardPosition)){
+                return;
+            }
 
             if (mouseEvent.getButton() == MouseButton.PRIMARY){
                 if (!pieceDragging){
@@ -141,6 +163,8 @@ public class Board extends Canvas {
 
         graphicsContext.translate(-width / 2, -height / 2);
 
+        blackBanner.draw(graphicsContext);
+
         for (Tile[] tileRow : tilesMatrix){
             for (Tile tile : tileRow){
                 TileType type = tile.type;
@@ -197,6 +221,8 @@ public class Board extends Canvas {
 
             new Tag(String.valueOf(AppParameters.BOARD_SIZE - row).toUpperCase(), NotationTags.NUMBER).draw(graphicsContext, new Vector2(coordinateX, coordinateY));
         }
+
+        whiteBanner.draw(graphicsContext);
 
 
         Piece draggedPiece = null;

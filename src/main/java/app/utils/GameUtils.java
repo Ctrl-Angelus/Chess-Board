@@ -14,7 +14,7 @@ public class GameUtils {
         int row = 0;
         int column = 0;
         double coordinateX = 0;
-        double coordinateY = 0;
+        double coordinateY = AppParameters.TILE_SIZE/2;
         boolean piecePlacement = true;
         for (char character : initialPosition){
             if (character == ' '){
@@ -25,7 +25,6 @@ public class GameUtils {
                 continue;
             }
             if (!piecePlacement){
-                // TODO: FIX THE INITIAL ACTIVE PIECES
                 switch (Character.toLowerCase(character)){
                     case 'w' -> AppState.setActivePieces(PieceKind.LIGHT);
                     case 'b' -> AppState.setActivePieces(PieceKind.DARK);
@@ -74,11 +73,11 @@ public class GameUtils {
     }
 
     public static Vector2 getMouseCoordinates(MouseEvent mouseEvent, boolean hasRotation){
-        double mouseX = mouseEvent.getSceneX();
-        double mouseY = mouseEvent.getSceneY();
+        double mouseX = mouseEvent.getX();
+        double mouseY = mouseEvent.getY();
 
         if (hasRotation){
-            mouseX = AppParameters.APP_SIZE - mouseX;
+            mouseX = AppParameters.APP_SIZE - mouseX - AppParameters.TILE_SIZE;
             mouseY = AppParameters.APP_SIZE - mouseY;
         }
         return new Vector2(
@@ -89,7 +88,7 @@ public class GameUtils {
     public static Position getBoardPosition(MouseEvent mouseEvent, boolean hasRotation){
         Vector2 coordinates = getMouseCoordinates(mouseEvent, false);
         int currentCol = (int) (coordinates.coordinateX() / AppParameters.TILE_SIZE);
-        int currentRow = (int) (coordinates.coordinateY() / AppParameters.TILE_SIZE);
+        int currentRow = (int) ((coordinates.coordinateY() - AppParameters.TILE_SIZE/2) / AppParameters.TILE_SIZE);
 
         if (hasRotation){
             currentCol = AppParameters.BOARD_SIZE - currentCol - 1;

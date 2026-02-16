@@ -35,11 +35,11 @@ public record Tag(String content, NotationTags tagType) {
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
         gc.setFont(AppAssets.DEFAULT_FONT);
-        gc.setFill(AppParameters.TEXT_COLOR);
+        gc.setFill(AppParameters.LIGHT_TEXT_COLOR);
         gc.fillText(
-                this.content.toUpperCase(),
-                0,
-                0
+            this.content.toUpperCase(),
+            0,
+            0
         );
         gc.restore();
     }
